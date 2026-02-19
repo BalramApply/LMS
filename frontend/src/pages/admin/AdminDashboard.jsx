@@ -9,8 +9,6 @@ import {
   FiCheckCircle,
   FiMessageSquare,
   FiUserCheck,
-  FiEdit,
-  FiEye,
 } from 'react-icons/fi';
 import api from '../../api/client';
 import Loader from '../../components/common/Loader';

@@ -19,10 +19,6 @@ const ManageStudents = () => {
     fetchStudents();
   }, []);
 
-  useEffect(() => {
-    filterStudents();
-  }, [students, search, statusFilter]);
-
   const fetchStudents = async () => {
     try {
       const response = await api.get('/admin/students');
@@ -34,22 +30,25 @@ const ManageStudents = () => {
     }
   };
 
-  const filterStudents = () => {
-    let filtered = [...students];
-    if (search) {
-      filtered = filtered.filter(
-        (s) =>
-          s.name.toLowerCase().includes(search.toLowerCase()) ||
-          s.email.toLowerCase().includes(search.toLowerCase())
-      );
-    }
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((s) =>
-        statusFilter === 'active' ? s.isActive : !s.isActive
-      );
-    }
-    setFilteredStudents(filtered);
-  };
+  useEffect(() => {
+  let filtered = [...students];
+
+  if (search) {
+    filtered = filtered.filter(
+      (s) =>
+        s.name.toLowerCase().includes(search.toLowerCase()) ||
+        s.email.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter((s) =>
+      statusFilter === 'active' ? s.isActive : !s.isActive
+    );
+  }
+
+  setFilteredStudents(filtered);
+}, [students, search, statusFilter]);
 
   const handleToggleStatus = async (studentId) => {
     try {

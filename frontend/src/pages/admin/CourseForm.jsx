@@ -1,7 +1,7 @@
-  import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect, useCallback } from 'react';
   import { useParams, useNavigate } from 'react-router-dom';
   import { motion } from 'framer-motion';
-  import { FiSave, FiX, FiUpload, FiImage } from 'react-icons/fi';
+  import { FiSave, FiX, FiUpload } from 'react-icons/fi';
   import api from '../../api/client';
   import toast from 'react-hot-toast';
   import styles from './styles/CourseForm.module.css';
@@ -33,52 +33,51 @@
     const [roadmapInput, setRoadmapInput] = useState('');
     const [thumbnailFile, setThumbnailFile] = useState(null);
     const [thumbnailPreview, setThumbnailPreview] = useState('');
-    const [uploading, setUploading] = useState(false);
     const [loading, setLoading] = useState(false);
+  
+    const loadCourse = useCallback(async () => {
+  try {
+    const response = await api.get(`/courses/${id}`);
+    const course = response.data.data;
 
-    useEffect(() => {
-      if (isEditMode) {
-        loadCourse();
-      }
-    }, [id]);
+    setFormData({
+      title: course.title || '',
+      shortDescription: course.shortDescription || '',
+      fullDescription: course.fullDescription || '',
+      category: course.category || 'Web Development',
+      level: course.level || 'Beginner',
+      language: course.language || 'English',
+      courseType: course.courseType || 'Free',
+      price: course.price || 0,
+      discountPrice: course.discountPrice || 0,
+      discountValidTill: course.discountValidTill ? course.discountValidTill.split('T')[0] : '',
+      batchType: course.batchType || 'Recorded',
+      accessType: course.accessType || 'Lifetime',
+      accessDuration: course.accessDuration || null,
+      instructorName: course.instructorName || '',
+      instructorBio: course.instructorBio || '',
+      isPublished: course.isPublished || false,
+    });
 
-    const loadCourse = async () => {
-      try {
-        const response = await api.get(`/courses/${id}`);
-        const course = response.data.data;
-        
-        setFormData({
-          title: course.title || '',
-          shortDescription: course.shortDescription || '',
-          fullDescription: course.fullDescription || '',
-          category: course.category || 'Web Development',
-          level: course.level || 'Beginner',
-          language: course.language || 'English',
-          courseType: course.courseType || 'Free',
-          price: course.price || 0,
-          discountPrice: course.discountPrice || 0,
-          discountValidTill: course.discountValidTill ? course.discountValidTill.split('T')[0] : '',
-          batchType: course.batchType || 'Recorded',
-          accessType: course.accessType || 'Lifetime',
-          accessDuration: course.accessDuration || null,
-          instructorName: course.instructorName || '',
-          instructorBio: course.instructorBio || '',
-          isPublished: course.isPublished || false,
-        });
-        
-        if (course.thumbnail?.url) {
-          setThumbnailPreview(course.thumbnail.url);
-        }
-        
-        if (course.roadmap && course.roadmap.length > 0) {
-          const roadmapText = course.roadmap.map(item => item.title || item).join('\n');
-          setRoadmapInput(roadmapText);
-        }
-      } catch (error) {
-        toast.error('Failed to load course');
-        navigate('/admin/courses');
-      }
-    };
+    if (course.thumbnail?.url) {
+      setThumbnailPreview(course.thumbnail.url);
+    }
+
+    if (course.roadmap?.length > 0) {
+      const roadmapText = course.roadmap.map(item => item.title || item).join('\n');
+      setRoadmapInput(roadmapText);
+    }
+  } catch (error) {
+    toast.error('Failed to load course');
+    navigate('/admin/courses');
+  }
+}, [id, navigate]);
+
+ useEffect(() => {
+  if (isEditMode) {
+    loadCourse();
+  }
+}, [isEditMode, loadCourse]);
 
     const handleChange = (e) => {
       const { name, value, type, checked } = e.target;

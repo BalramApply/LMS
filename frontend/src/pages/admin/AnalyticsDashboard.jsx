@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback  } from 'react';
 import { motion } from 'framer-motion';
 import {
   LineChart, Line, BarChart, Bar,
@@ -24,52 +24,52 @@ const AnalyticsDashboard = () => {
   const [quizScores, setQuizScores] = useState([]);
 
   useEffect(() => {
-    fetchAllAnalytics();
-  }, [period]);
-
-  useEffect(() => {
     if (selectedCourse) {
       fetchCourseAnalytics(selectedCourse);
     }
   }, [selectedCourse]);
 
-  const fetchAllAnalytics = async () => {
-    try {
-      setLoading(true);
+  const fetchAllAnalytics = useCallback(async () => {
+  try {
+    setLoading(true);
 
-      const [
-        enrollRes,
-        revenueMonthRes,
-        revenueDayRes,
-        bestRes,
-        completionRes,
-        activeRes
-      ] = await Promise.all([
-        api.get(`/analytics/enrollments-over-time?period=${period}`),
-        api.get(`/analytics/revenue?period=month`),
-        api.get(`/analytics/revenue?period=day`),
-        api.get(`/analytics/best-selling-courses`),
-        api.get(`/analytics/course-completion`),
-        api.get(`/analytics/active-students`)
-      ]);
+    const [
+      enrollRes,
+      revenueMonthRes,
+      revenueDayRes,
+      bestRes,
+      completionRes,
+      activeRes
+    ] = await Promise.all([
+      api.get(`/analytics/enrollments-over-time?period=${period}`),
+      api.get(`/analytics/revenue?period=month`),
+      api.get(`/analytics/revenue?period=day`),
+      api.get(`/analytics/best-selling-courses`),
+      api.get(`/analytics/course-completion`),
+      api.get(`/analytics/active-students`)
+    ]);
 
-      setEnrollments(enrollRes.data.data);
-      setRevenueMonthly(revenueMonthRes.data.data);
-      setRevenueDaily(revenueDayRes.data.data);
-      setBestCourses(bestRes.data.data);
-      setCompletionStats(completionRes.data.data);
-      setActiveStudents(activeRes.data.data);
+    setEnrollments(enrollRes.data.data);
+    setRevenueMonthly(revenueMonthRes.data.data);
+    setRevenueDaily(revenueDayRes.data.data);
+    setBestCourses(bestRes.data.data);
+    setCompletionStats(completionRes.data.data);
+    setActiveStudents(activeRes.data.data);
 
-      if (completionRes.data.data.length > 0) {
-        setSelectedCourse(completionRes.data.data[0].courseId);
-      }
-
-    } catch (error) {
-      console.error("Analytics fetch failed", error);
-    } finally {
-      setLoading(false);
+    if (completionRes.data.data.length > 0) {
+      setSelectedCourse(completionRes.data.data[0].courseId);
     }
-  };
+
+  } catch (error) {
+    console.error("Analytics fetch failed", error);
+  } finally {
+    setLoading(false);
+  }
+}, [period]);   // 👈 IMPORTANT
+
+useEffect(() => {
+  fetchAllAnalytics();
+}, [fetchAllAnalytics]);
 
   const fetchCourseAnalytics = async (courseId) => {
     try {

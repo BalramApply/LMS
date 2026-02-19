@@ -295,7 +295,7 @@ const courseSlice = createSlice({
         // This will be handled by refetching user data via getMe in the component
       })
       .addCase(replyToComment.fulfilled, (state, action) => {
-        const { courseId, levelId, topicId, commentId } = action.payload;
+        const { levelId, topicId, commentId } = action.payload;
 
         const level = state.currentCourse.levels.find((l) => l._id === levelId);
 

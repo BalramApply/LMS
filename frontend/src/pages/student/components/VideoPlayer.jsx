@@ -29,9 +29,9 @@ const VideoPlayer = ({
   const [hasStarted, setHasStarted] = useState(false);
 
   // Get auth token from localStorage
-  const getAuthToken = () => {
-    return localStorage.getItem('token') || sessionStorage.getItem('token');
-  };
+  // const getAuthToken = () => {
+  //   return localStorage.getItem('token') || sessionStorage.getItem('token');
+  // };
 
   // API call to update video progress
   const updateVideoProgressAPI = async (watchedPercentage, lastWatchedTimestamp) => {
@@ -44,7 +44,7 @@ const VideoPlayer = ({
     });
 
     if (response.data.success) {
-      console.log('Video progress updated successfully');
+      // console.log('Video progress updated successfully');
     }
 
   } catch (error) {

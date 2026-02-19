@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -61,26 +61,25 @@ const CourseContent = () => {
     },
   });
 
-  useEffect(() => {
-    loadCourse();
-  }, [courseId]);
+  const loadCourse = useCallback(async () => {
+  try {
+    const response = await api.get(`/courses/${courseId}`);
+    setCourse(response.data.data);
 
-  const loadCourse = async () => {
-    try {
-      const response = await api.get(`/courses/${courseId}`);
-      setCourse(response.data.data);
-      
-      // Auto-expand first level
-      if (response.data.data.levels?.length > 0) {
-        setExpandedLevels({ [response.data.data.levels[0]._id]: true });
-      }
-    } catch (error) {
-      toast.error('Failed to load course');
-      navigate('/admin/courses');
-    } finally {
-      setLoading(false);
+    if (response.data.data.levels?.length > 0) {
+      setExpandedLevels({ [response.data.data.levels[0]._id]: true });
     }
-  };
+  } catch (error) {
+    toast.error('Failed to load course');
+    navigate('/admin/courses');
+  } finally {
+    setLoading(false);
+  }
+}, [courseId, navigate]);
+
+useEffect(() => {
+  loadCourse();
+}, [loadCourse]);
 
   const toggleLevel = (levelId) => {
     setExpandedLevels(prev => ({

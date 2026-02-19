@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, clearError } from '../../redux/slices/authSlice';
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
-import Loader from '../../components/common/Loader';
 import styles from './styles/Login.module.css';
 
 const Login = () => {

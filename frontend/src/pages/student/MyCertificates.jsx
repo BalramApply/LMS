@@ -191,7 +191,7 @@ useEffect(() => {
   };
 
   init();
-}, []);
+}, [tryGenerate]);
 
   /* Re-fetch after any generation completes */
   useEffect(() => {
@@ -201,7 +201,7 @@ useEffect(() => {
         .then(r => setCertificates(r.data.data || []))
         .catch(() => {});
     }
-  }, [generating]);
+  }, [generating, isLoading]);
 
   const handleDownload = (cert) => {
     const url = cert.certificatePDF?.url;

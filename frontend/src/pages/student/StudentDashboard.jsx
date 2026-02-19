@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { FiBook, FiAward, FiTrendingUp, FiClock, FiPlay, FiCheckCircle } from 'react-icons/fi';
 import { getEnrolledCourses } from '../../redux/slices/courseSlice';
-import Loader, { SkeletonCard } from '../../components/common/Loader';
-import { getProgressColor, getProgressTextColor } from '../../utils/progressCalculator';
+import { SkeletonCard } from '../../components/common/Loader';
 import { formatDate } from '../../utils/formatters';
 import styles from "./styles/StudentDashboard.module.css";
 

@@ -185,7 +185,7 @@ const CommentSection = ({
               className={styles.emptyState}
             >
               <FiMessageSquare className={styles.emptyIcon} />
-              <p className={styles.emptyTitle}>// NO_ENTRIES_FOUND</p>
+              <p className={styles.emptyTitle}>{'//NO_ENTRIES_FOUND'}</p>
               <p className={styles.emptySubtitle}>Be the first to open the channel.</p>
             </motion.div>
           ) : (
@@ -231,7 +231,7 @@ const CommentSection = ({
                         <span className={styles.commentAuthor}>
                           {comment.student?.name || 'Anonymous'}
                         </span>
-                        <span className={styles.commentDivider}>//</span>
+                        <span className={styles.commentDivider}>{'//'}</span>
                         <span className={styles.commentTime}>
                           {formatRelativeTime(comment.createdAt)}
                         </span>

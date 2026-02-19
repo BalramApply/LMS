@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-import { FiUser, FiMail, FiLock, FiSave, FiCamera } from 'react-icons/fi';
+import { FiLock, FiSave, FiCamera } from 'react-icons/fi';
 import { updateProfile, updatePassword } from '../../redux/slices/authSlice';
 import PasswordStrengthIndicator from '../../pages/auth/components/PasswordStrengthIndicator';
 import { isPasswordValid } from '../../utils/passwordStrength';

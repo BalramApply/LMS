@@ -58,7 +58,7 @@ const VerifyCertificate = () => {
             <div className={styles.iconGlow} aria-hidden="true" />
           </div>
           <h1 className={styles.title}>
-            <span className={styles.titleAccent}>//</span> VERIFY CERTIFICATE
+            <span className={styles.titleAccent}>{'//'}</span> VERIFY CERTIFICATE
           </h1>
           <p className={styles.subtitle}>
             Enter a certificate ID to authenticate its origin
