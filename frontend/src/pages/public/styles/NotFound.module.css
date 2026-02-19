@@ -1,0 +1,373 @@
+/* ============================================================
+   NotFound.module.css — Cyberpunk Dark Mode
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+/* ── Tokens ───────────────────────────────────────────────── */
+:root {
+  --nf-bg:           #05080f;
+  --nf-surface:      #090d18;
+  --nf-border:       #1a2744;
+
+  --nf-cyan:         #00f5ff;
+  --nf-cyan-dim:     rgba(0, 245, 255, 0.10);
+  --nf-cyan-mid:     rgba(0, 245, 255, 0.30);
+  --nf-magenta:      #ff2d78;
+  --nf-magenta-dim:  rgba(255, 45, 120, 0.10);
+  --nf-yellow:       #f7e03c;
+
+  --nf-text:         #c8d8f0;
+  --nf-text-dim:     #4e6585;
+  --nf-text-bright:  #e8f4ff;
+
+  --font-display: 'Share Tech Mono', 'Courier New', monospace;
+  --font-body:    'Rajdhani', 'Trebuchet MS', sans-serif;
+}
+
+/* ── Page shell ──────────────────────────────────────────── */
+.page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: var(--nf-bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% 50%, rgba(0, 245, 255, 0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 15% 80%,  rgba(255, 45, 120, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 20%,  rgba(247, 224, 60, 0.04) 0%, transparent 55%);
+  font-family: var(--font-body);
+  color: var(--nf-text);
+  overflow: hidden;
+}
+
+/* ── Ambient layers ───────────────────────────────────────── */
+.scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.16) 3px,
+    rgba(0, 0, 0, 0.16) 4px
+  );
+  animation: scanScroll 10s linear infinite;
+}
+
+@keyframes scanScroll {
+  from { background-position: 0 0; }
+  to   { background-position: 0 120px; }
+}
+
+.gridBg {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 245, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 0.035) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+/* sweeping horizontal glitch bar */
+.glitchBar {
+  pointer-events: none;
+  position: fixed;
+  left: 0; right: 0;
+  height: 2px;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--nf-cyan) 30%,
+    var(--nf-magenta) 60%,
+    transparent 100%
+  );
+  opacity: 0;
+  animation: barSweep 6s ease-in-out infinite;
+}
+
+@keyframes barSweep {
+  0%   { top: -4px; opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.5; }
+  100% { top: 104vh; opacity: 0; }
+}
+
+/* ── Layout ──────────────────────────────────────────────── */
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 540px;
+  width: 100%;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ── 404 Number ──────────────────────────────────────────── */
+.numberWrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
+
+.number404,
+.glitch1,
+.glitch2 {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(5.5rem, 22vw, 10rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.number404 {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--nf-cyan);
+  text-shadow:
+    0 0 30px var(--nf-cyan-mid),
+    0 0 80px rgba(0, 245, 255, 0.12);
+  position: relative;
+  z-index: 1;
+}
+
+/* glitch clone 1 — cyan offset */
+.glitch1 {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--nf-cyan);
+  opacity: 0;
+  z-index: 0;
+  animation: glitch1Anim 4s steps(1) infinite;
+}
+
+/* glitch clone 2 — magenta offset */
+.glitch2 {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--nf-magenta);
+  opacity: 0;
+  z-index: 0;
+  animation: glitch2Anim 4s steps(1) infinite;
+}
+
+@keyframes glitch1Anim {
+  0%, 94%, 100% { opacity: 0; transform: translate(0, 0); }
+  95%  { opacity: 0.7; transform: translate(-4px, 2px);  clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); }
+  97%  { opacity: 0.5; transform: translate(3px, -1px);  clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%); }
+}
+
+@keyframes glitch2Anim {
+  0%, 93%, 100% { opacity: 0; transform: translate(0, 0); }
+  94%  { opacity: 0.6; transform: translate(5px, -2px);  clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%); }
+  96%  { opacity: 0.4; transform: translate(-3px, 1px);  clip-path: polygon(0 70%, 100% 70%, 100% 85%, 0 85%); }
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 1.5rem;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--nf-cyan-mid), transparent);
+}
+
+.dividerDot {
+  width: 6px;
+  height: 6px;
+  background: var(--nf-cyan);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px var(--nf-cyan);
+  flex-shrink: 0;
+}
+
+/* ── Text ────────────────────────────────────────────────── */
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  color: var(--nf-text-bright);
+  text-shadow: 0 0 16px var(--nf-cyan-mid);
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--nf-text-dim);
+  letter-spacing: 0.03em;
+  margin: 0 0 2.25rem;
+  max-width: 380px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+/* shared base */
+.btnPrimary,
+.btnOutline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.6rem;
+  height: 2.9rem;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  transition: filter 0.2s, box-shadow 0.2s;
+}
+
+/* filled primary */
+.btnPrimary {
+  background: linear-gradient(135deg, var(--nf-cyan) 0%, #00b8cc 100%);
+  color: var(--nf-bg);
+  font-weight: 700;
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.18);
+  box-shadow: 0 0 28px var(--nf-cyan-mid), 0 0 60px rgba(0, 245, 255, 0.10);
+}
+
+/* outline ghost */
+.btnOutline {
+  background: transparent;
+  color: var(--nf-cyan);
+  box-shadow: inset 0 0 0 1px var(--nf-cyan);
+}
+
+.btnOutline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--nf-cyan);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+  z-index: 0;
+}
+
+.btnOutline:hover::before {
+  transform: scaleX(1);
+}
+
+.btnOutline:hover {
+  color: var(--nf-bg);
+  box-shadow: 0 0 22px var(--nf-cyan-mid);
+}
+
+.btnOutline > * {
+  position: relative;
+  z-index: 1;
+}
+
+.btnIcon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ── Decorative Orb ──────────────────────────────────────── */
+.orbWrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed var(--nf-cyan-mid);
+}
+
+.orbRing::before,
+.orbRing::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+}
+
+.orbRing::before {
+  inset: 10px;
+  border: 1px solid rgba(255, 45, 120, 0.25);
+}
+
+.orbRing::after {
+  inset: 22px;
+  border: 1px solid rgba(247, 224, 60, 0.15);
+}
+
+.orbCore {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--nf-cyan-dim) 0%, transparent 70%);
+  border: 1px solid var(--nf-cyan-mid);
+  box-shadow:
+    0 0 16px var(--nf-cyan-mid),
+    0 0 40px rgba(0, 245, 255, 0.08);
+  animation: orbPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes orbPulse {
+  0%, 100% { box-shadow: 0 0 16px var(--nf-cyan-mid), 0 0 40px rgba(0,245,255,0.08); }
+  50%       { box-shadow: 0 0 28px var(--nf-cyan),     0 0 60px rgba(0,245,255,0.18); }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btnPrimary,
+  .btnOutline {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+    clip-path: none;
+  }
+}

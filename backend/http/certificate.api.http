@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:5000
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTU3N2VjMzQwZDBkYWNmNGYyM2UzOSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcxNDAzMzE4LCJleHAiOjE3NzIwMDgxMTh9.pX7Lp50Y4kb6dPtaWuwYutNMBwtA62_lfHlB7qwmvI4
+@courseId = 69955c23abdd5fa817e3c53a
+@certificateId = LMS-2026-A2WDXL
+
+### =====================================================
+### 1️⃣ Check Certificate Eligibility (Student)
+### GET /api/certificates/check-eligibility/:courseId
+### =====================================================
+GET {{baseUrl}}/api/certificates/check-eligibility/{{courseId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+### =====================================================
+### 2️⃣ Generate Certificate (Student)
+### POST /api/certificates/generate/:courseId
+### =====================================================
+POST {{baseUrl}}/api/certificates/generate/{{courseId}}
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+### =====================================================
+### 3️⃣ Get My Certificates (Student)
+### GET /api/certificates/my-certificates
+### =====================================================
+GET {{baseUrl}}/api/certificates/my-certificates
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+### =====================================================
+### 4️⃣ Verify Certificate (Public)
+### GET /api/certificates/verify/:certificateId
+### =====================================================
+GET {{baseUrl}}/api/certificates/verify/{{certificateId}}
+Content-Type: application/json

@@ -1,0 +1,648 @@
+/* Cyberpunk Video Player Styles */
+
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1f 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 
+    0 0 30px rgba(0, 240, 255, 0.3),
+    0 0 60px rgba(255, 0, 255, 0.2),
+    inset 0 0 100px rgba(0, 0, 0, 0.8);
+  border: 2px solid transparent;
+  background-image: 
+    linear-gradient(135deg, #0a0a0a 0%, #1a0a1f 100%),
+    linear-gradient(90deg, #00f0ff, #ff00ff, #00f0ff);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8));
+  }
+}
+
+.playerWrapper {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  background: #000;
+  overflow: hidden;
+}
+
+.playerWrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 240, 255, 0.03) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(0, 240, 255, 0.03) 3px
+    );
+  pointer-events: none;
+  z-index: 1;
+  animation: scanlines 8s linear infinite;
+}
+
+@keyframes scanlines {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(20px);
+  }
+}
+
+.videoElement {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+/* Loading Overlay */
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(0, 240, 255, 0.2);
+  border-top: 4px solid #00f0ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 
+    0 0 20px rgba(0, 240, 255, 0.5),
+    inset 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingText {
+  margin-top: 20px;
+  color: #00f0ff;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 
+    0 0 10px rgba(0, 240, 255, 0.8),
+    0 0 20px rgba(0, 240, 255, 0.6),
+    0 0 30px rgba(0, 240, 255, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Play Overlay */
+.playOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  z-index: 5;
+  backdrop-filter: blur(4px);
+}
+
+.playButton {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 240, 255, 0.1);
+  border: 3px solid #00f0ff;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 0 30px rgba(0, 240, 255, 0.6),
+    inset 0 0 30px rgba(0, 240, 255, 0.2);
+  position: relative;
+}
+
+.playButton::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border: 2px solid rgba(255, 0, 255, 0.3);
+  border-radius: 50%;
+  animation: ripple 2s ease-out infinite;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.playButton:hover {
+  transform: scale(1.1);
+  background: rgba(0, 240, 255, 0.2);
+  box-shadow: 
+    0 0 50px rgba(0, 240, 255, 0.9),
+    inset 0 0 50px rgba(0, 240, 255, 0.4);
+}
+
+.playIcon {
+  font-size: 40px;
+  color: #00f0ff;
+  filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.8));
+  margin-left: 6px;
+}
+
+/* Controls */
+.controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 20, 0.95) 0%,
+    rgba(10, 10, 20, 0.85) 70%,
+    transparent 100%
+  );
+  padding: 20px;
+  z-index: 6;
+  border-top: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.progressSection {
+  margin-bottom: 15px;
+}
+
+.progressSlider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 
+    0 0 10px rgba(0, 240, 255, 0.4),
+    inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.progressSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #00f0ff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 
+    0 0 15px rgba(0, 240, 255, 0.9),
+    0 0 25px rgba(0, 240, 255, 0.6);
+  transition: all 0.2s ease;
+}
+
+.progressSlider::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+  box-shadow: 
+    0 0 25px rgba(0, 240, 255, 1),
+    0 0 40px rgba(255, 0, 255, 0.8);
+}
+
+.progressSlider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #00f0ff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 
+    0 0 15px rgba(0, 240, 255, 0.9),
+    0 0 25px rgba(0, 240, 255, 0.6);
+  transition: all 0.2s ease;
+}
+
+.progressSlider::-moz-range-thumb:hover {
+  transform: scale(1.3);
+  box-shadow: 
+    0 0 25px rgba(0, 240, 255, 1),
+    0 0 40px rgba(255, 0, 255, 0.8);
+}
+
+.timeDisplay {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #00f0ff;
+  font-weight: 500;
+  text-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+  font-family: 'Courier New', monospace;
+}
+
+.controlsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.controlsLeft,
+.controlsRight {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.controlButton {
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  color: #00f0ff;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.controlButton:hover {
+  background: rgba(0, 240, 255, 0.3);
+  border-color: #00f0ff;
+  box-shadow: 
+    0 0 15px rgba(0, 240, 255, 0.6),
+    inset 0 0 10px rgba(0, 240, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.controlButton:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 0 10px rgba(0, 240, 255, 0.4),
+    inset 0 0 15px rgba(0, 240, 255, 0.3);
+}
+
+.controlIcon {
+  font-size: 20px;
+  filter: drop-shadow(0 0 5px rgba(0, 240, 255, 0.8));
+}
+
+/* Volume Control */
+.volumeControl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.volumeSlider {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, #00f0ff 0%, #00f0ff 100%, #4b5563 100%);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 240, 255, 0.4);
+}
+
+.volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #00f0ff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.9);
+}
+
+.volumeSlider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #00f0ff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.9);
+  border: none;
+}
+
+.timeText {
+  color: #00f0ff;
+  font-size: 14px;
+  font-weight: 500;
+  text-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+/* Speed Control */
+.speedControl {
+  position: relative;
+}
+
+.speedButton {
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  color: #00f0ff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.speedButton:hover {
+  background: rgba(0, 240, 255, 0.3);
+  border-color: #00f0ff;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+}
+
+.speedText {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+}
+
+.speedMenu {
+  position: absolute;
+  bottom: 110%;
+  right: 0;
+  background: rgba(10, 10, 20, 0.98);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  border-radius: 8px;
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 100px;
+  box-shadow: 
+    0 0 30px rgba(0, 240, 255, 0.4),
+    0 10px 50px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.speedControl:hover .speedMenu {
+  display: flex;
+}
+
+.speedOption {
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #00f0ff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+}
+
+.speedOption:hover {
+  background: rgba(0, 240, 255, 0.2);
+  border-color: #00f0ff;
+  box-shadow: 
+    0 0 10px rgba(0, 240, 255, 0.5),
+    inset 0 0 10px rgba(0, 240, 255, 0.1);
+  transform: translateX(-3px);
+}
+
+.speedOptionActive {
+  background: rgba(255, 0, 255, 0.3);
+  border-color: #ff00ff;
+  box-shadow: 
+    0 0 15px rgba(255, 0, 255, 0.6),
+    inset 0 0 10px rgba(255, 0, 255, 0.2);
+}
+
+/* Progress Badge */
+.watchedBadge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(255, 0, 255, 0.2));
+  border: 1px solid #00f0ff;
+  color: #00f0ff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 0 20px rgba(0, 240, 255, 0.5),
+    inset 0 0 10px rgba(0, 240, 255, 0.1);
+  z-index: 7;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.9);
+  animation: badgePulse 3s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(0, 240, 255, 0.5),
+      inset 0 0 10px rgba(0, 240, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(255, 0, 255, 0.7),
+      inset 0 0 15px rgba(255, 0, 255, 0.2);
+    border-color: #ff00ff;
+    color: #ff00ff;
+  }
+}
+
+/* Error Container */
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  background: linear-gradient(135deg, #1a0a1f 0%, #0a0a0a 100%);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 0, 100, 0.5);
+  box-shadow: 
+    0 0 30px rgba(255, 0, 100, 0.3),
+    inset 0 0 50px rgba(0, 0, 0, 0.8);
+}
+
+.errorIcon {
+  font-size: 60px;
+  color: #ff0064;
+  filter: drop-shadow(0 0 20px rgba(255, 0, 100, 0.8));
+  margin-bottom: 20px;
+  animation: errorPulse 2s ease-in-out infinite;
+}
+
+@keyframes errorPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+.errorTitle {
+  color: #ff0064;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 0, 100, 0.8);
+}
+
+.errorMessage {
+  color: #ff66a3;
+  font-size: 16px;
+  margin-bottom: 30px;
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.retryButton {
+  background: linear-gradient(135deg, rgba(255, 0, 100, 0.2), rgba(255, 0, 255, 0.2));
+  border: 2px solid #ff0064;
+  color: #ff0064;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(255, 0, 100, 0.4);
+}
+
+.retryButton:hover {
+  background: linear-gradient(135deg, rgba(255, 0, 100, 0.4), rgba(255, 0, 255, 0.4));
+  box-shadow: 
+    0 0 30px rgba(255, 0, 100, 0.8),
+    inset 0 0 20px rgba(255, 0, 100, 0.2);
+  transform: translateY(-2px);
+}
+
+.retryButton:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .controls {
+    padding: 15px 10px;
+  }
+
+  .controlsBar {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .controlsLeft,
+  .controlsRight {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .volumeSlider {
+    width: 60px;
+  }
+
+  .playButton {
+    width: 80px;
+    height: 80px;
+  }
+
+  .playIcon {
+    font-size: 32px;
+  }
+
+  .watchedBadge {
+    font-size: 12px;
+    padding: 6px 12px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .controlIcon {
+    font-size: 18px;
+  }
+
+  .timeText {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .speedControl,
+  .volumeControl {
+    display: none;
+  }
+
+  .timeDisplay {
+    font-size: 10px;
+  }
+}

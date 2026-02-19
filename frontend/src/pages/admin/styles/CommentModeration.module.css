@@ -1,0 +1,680 @@
+/* ============================================
+   CYBERPUNK DARK MODE - COMMENT MODERATION
+   ============================================ */
+
+/* Root Variables - Cyberpunk Color Palette */
+:root {
+  --cyber-bg-dark: #0a0e27;
+  --cyber-bg-card: #1a1f3a;
+  --cyber-bg-hover: #252b4a;
+  --cyber-primary: #00f0ff;
+  --cyber-secondary: #ff00ff;
+  --cyber-accent: #7b2cbf;
+  --cyber-success: #00ff88;
+  --cyber-warning: #ffbd00;
+  --cyber-danger: #ff006e;
+  --cyber-text: #e0e7ff;
+  --cyber-text-dim: #94a3b8;
+  --cyber-border: rgba(0, 240, 255, 0.3);
+  --cyber-glow: rgba(0, 240, 255, 0.6);
+  --cyber-glow-pink: rgba(255, 0, 255, 0.6);
+}
+
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--cyber-bg-dark) 0%, #0d1225 100%);
+  color: var(--cyber-text);
+  padding: 2rem 0;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Grid overlay background */
+.container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 240, 255, 0.03) 2px,
+      rgba(0, 240, 255, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--cyber-primary) 0%, var(--cyber-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 30px var(--cyber-glow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--cyber-text-dim);
+  letter-spacing: 0.02em;
+}
+
+/* ============================================
+   COMMENTS LIST
+   ============================================ */
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ============================================
+   COMMENT CARD
+   ============================================ */
+.commentCard {
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 
+    0 0 25px rgba(0, 240, 255, 0.15),
+    inset 0 0 50px rgba(0, 240, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.commentCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary), var(--cyber-primary));
+  background-size: 200% 100%;
+  animation: borderFlow 3s linear infinite;
+}
+
+@keyframes borderFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.commentCard:hover {
+  border-color: var(--cyber-primary);
+  box-shadow: 
+    0 0 35px rgba(0, 240, 255, 0.25),
+    inset 0 0 50px rgba(0, 240, 255, 0.05);
+  transform: translateY(-3px);
+}
+
+/* ============================================
+   COMMENT HEADER
+   ============================================ */
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.studentInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--cyber-primary);
+  box-shadow: 0 0 15px var(--cyber-glow);
+  transition: all 0.3s ease;
+}
+
+.avatar:hover {
+  box-shadow: 0 0 25px var(--cyber-glow);
+  transform: scale(1.05);
+}
+
+.avatarPlaceholder {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(255, 0, 255, 0.3));
+  border: 2px solid var(--cyber-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--cyber-primary);
+  box-shadow: 0 0 15px var(--cyber-glow);
+  text-transform: uppercase;
+}
+
+.studentDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.studentName {
+  font-weight: 700;
+  color: var(--cyber-primary);
+  font-size: 1.125rem;
+  margin-bottom: 0.25rem;
+  text-shadow: 0 0 10px var(--cyber-glow);
+}
+
+.commentMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  color: var(--cyber-text-dim);
+}
+
+.timestamp {
+  color: var(--cyber-warning);
+  font-weight: 600;
+}
+
+.separator {
+  color: var(--cyber-text-dim);
+  opacity: 0.5;
+}
+
+.location {
+  color: var(--cyber-text-dim);
+}
+
+.location:hover {
+  color: var(--cyber-primary);
+  text-shadow: 0 0 5px var(--cyber-glow);
+}
+
+/* ============================================
+   COMMENT TEXT
+   ============================================ */
+.commentText {
+  color: var(--cyber-text);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(0, 240, 255, 0.03);
+  border-left: 3px solid var(--cyber-primary);
+  border-radius: 0.5rem;
+  white-space: pre-line;
+}
+
+/* ============================================
+   REPLIES SECTION
+   ============================================ */
+.repliesSection {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--cyber-secondary);
+}
+
+.replyCard {
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.08), rgba(123, 44, 191, 0.08));
+  border: 1px solid rgba(255, 0, 255, 0.2);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.replyCard:hover {
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.12), rgba(123, 44, 191, 0.12));
+  border-color: var(--cyber-secondary);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+}
+
+.replyLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--cyber-secondary);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 10px var(--cyber-glow-pink);
+}
+
+.replyText {
+  font-size: 0.875rem;
+  color: var(--cyber-text);
+  line-height: 1.6;
+}
+
+/* ============================================
+   REPLY BOX
+   ============================================ */
+.replyBox {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid var(--cyber-border);
+  border-radius: 0.75rem;
+  box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.05);
+}
+
+.replyInput {
+  width: 100%;
+  padding: 0.875rem;
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 0.5rem;
+  color: var(--cyber-text);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 100px;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.replyInput:focus {
+  outline: none;
+  border-color: var(--cyber-primary);
+  box-shadow: 
+    0 0 20px var(--cyber-glow),
+    inset 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+.replyInput::placeholder {
+  color: var(--cyber-text-dim);
+}
+
+.replyActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ============================================
+   COMMENT ACTIONS
+   ============================================ */
+.commentActions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btnReply,
+.btnDelete,
+.btnSend,
+.btnCancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border: 1px solid;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btnReply {
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--cyber-primary);
+  border-color: var(--cyber-primary);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.btnReply:hover {
+  background: rgba(0, 240, 255, 0.2);
+  box-shadow: 0 0 20px var(--cyber-glow);
+  transform: translateY(-2px);
+}
+
+.btnDelete {
+  background: linear-gradient(135deg, rgba(255, 0, 110, 0.15), rgba(204, 0, 90, 0.15));
+  color: var(--cyber-danger);
+  border-color: var(--cyber-danger);
+  box-shadow: 0 0 10px rgba(255, 0, 110, 0.2);
+}
+
+.btnDelete:hover {
+  background: linear-gradient(135deg, var(--cyber-danger), #cc005a);
+  color: white;
+  box-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+  transform: translateY(-2px);
+}
+
+.btnSend {
+  background: linear-gradient(135deg, var(--cyber-primary), #0099cc);
+  color: var(--cyber-bg-dark);
+  border-color: var(--cyber-primary);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+  flex: 1;
+}
+
+.btnSend:hover {
+  background: linear-gradient(135deg, #00d4ff, var(--cyber-primary));
+  box-shadow: 0 0 25px var(--cyber-glow);
+  transform: translateY(-2px);
+}
+
+.btnCancel {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--cyber-text-dim);
+  border-color: var(--cyber-text-dim);
+}
+
+.btnCancel:hover {
+  background: rgba(148, 163, 184, 0.2);
+  color: var(--cyber-text);
+  border-color: var(--cyber-text);
+  transform: translateY(-2px);
+}
+
+/* Button icons */
+.btnReply svg,
+.btnDelete svg,
+.btnSend svg,
+.btnCancel svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.emptyState {
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 1rem;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 
+    0 0 25px rgba(0, 240, 255, 0.15),
+    inset 0 0 50px rgba(0, 240, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.emptyState::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary), var(--cyber-primary));
+  background-size: 200% 100%;
+  animation: borderFlow 3s linear infinite;
+}
+
+.emptyIcon {
+  width: 5rem;
+  height: 5rem;
+  color: var(--cyber-primary);
+  margin: 0 auto 1.5rem;
+  opacity: 0.4;
+  filter: drop-shadow(0 0 20px var(--cyber-glow));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.emptyText {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--cyber-text);
+  margin-bottom: 0.5rem;
+}
+
+.emptySubtext {
+  font-size: 0.875rem;
+  color: var(--cyber-text-dim);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1024px) {
+  .title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+  }
+
+  .commentCard {
+    padding: 1.25rem;
+  }
+
+  .studentInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .commentMeta {
+    font-size: 0.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .separator {
+    display: none;
+  }
+
+  .commentActions {
+    flex-direction: column;
+  }
+
+  .btnReply,
+  .btnDelete {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .replyActions {
+    flex-direction: column;
+  }
+
+  .btnSend,
+  .btnCancel {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .repliesSection {
+    padding-left: 0.5rem;
+  }
+
+  .emptyState {
+    padding: 3rem 1.5rem;
+  }
+
+  .emptyIcon {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .wrapper {
+    padding: 0 0.5rem;
+  }
+
+  .commentCard {
+    padding: 1rem;
+  }
+
+  .avatar,
+  .avatarPlaceholder {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.875rem;
+  }
+
+  .studentName {
+    font-size: 1rem;
+  }
+
+  .commentText {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .replyBox {
+    padding: 0.75rem;
+  }
+
+  .replyInput {
+    min-height: 80px;
+    font-size: 0.8125rem;
+  }
+
+  .btnReply,
+  .btnDelete,
+  .btnSend,
+  .btnCancel {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* Apply subtle animations */
+.commentCard {
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.avatarPlaceholder {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+.commentsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.commentsList::-webkit-scrollbar-track {
+  background: rgba(0, 240, 255, 0.05);
+  border-radius: 4px;
+}
+
+.commentsList::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--cyber-primary), var(--cyber-secondary));
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--cyber-glow);
+}
+
+.commentsList::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--cyber-secondary), var(--cyber-primary));
+}
+
+/* ============================================
+   SPECIAL EFFECTS
+   ============================================ */
+
+/* Glow on focus */
+.replyInput:focus {
+  animation: inputGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes inputGlow {
+  0% {
+    box-shadow: 
+      0 0 15px var(--cyber-glow),
+      inset 0 0 10px rgba(0, 240, 255, 0.1);
+  }
+  100% {
+    box-shadow: 
+      0 0 25px var(--cyber-glow),
+      inset 0 0 15px rgba(0, 240, 255, 0.15);
+  }
+}
+
+/* Reply card entrance animation */
+.replyCard {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

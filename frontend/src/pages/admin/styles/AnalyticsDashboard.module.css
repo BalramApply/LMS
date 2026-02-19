@@ -1,0 +1,804 @@
+/* ============================================
+   CYBERPUNK DARK MODE - ANALYTICS DASHBOARD
+   ============================================ */
+
+/* Root Variables - Cyberpunk Color Palette */
+:root {
+  --cyber-bg-dark: #0a0e27;
+  --cyber-bg-card: #1a1f3a;
+  --cyber-bg-hover: #252b4a;
+  --cyber-primary: #00f0ff;
+  --cyber-secondary: #ff00ff;
+  --cyber-accent: #7b2cbf;
+  --cyber-success: #00ff88;
+  --cyber-warning: #ffbd00;
+  --cyber-danger: #ff006e;
+  --cyber-text: #e0e7ff;
+  --cyber-text-dim: #94a3b8;
+  --cyber-border: rgba(0, 240, 255, 0.3);
+  --cyber-glow: rgba(0, 240, 255, 0.6);
+  --cyber-glow-pink: rgba(255, 0, 255, 0.6);
+}
+
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--cyber-bg-dark) 0%, #0d1225 100%);
+  color: var(--cyber-text);
+  padding: 2rem 0;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Grid overlay background */
+.container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 240, 255, 0.03) 2px,
+      rgba(0, 240, 255, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--cyber-primary) 0%, var(--cyber-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 30px var(--cyber-glow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--cyber-text-dim);
+  letter-spacing: 0.02em;
+}
+
+.periodSelect {
+  padding: 0.875rem 1rem;
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 0.5rem;
+  color: var(--cyber-text);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+  min-width: 160px;
+}
+
+.periodSelect:focus {
+  outline: none;
+  border-color: var(--cyber-primary);
+  box-shadow: 0 0 20px var(--cyber-glow);
+}
+
+.periodSelect option {
+  background: var(--cyber-bg-card);
+  color: var(--cyber-text);
+}
+
+/* ============================================
+   STATS GRID
+   ============================================ */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 
+    0 0 25px rgba(0, 240, 255, 0.15),
+    inset 0 0 50px rgba(0, 240, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary), var(--cyber-primary));
+  background-size: 200% 100%;
+  animation: borderFlow 3s linear infinite;
+}
+
+@keyframes borderFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 0 35px rgba(0, 240, 255, 0.25),
+    inset 0 0 50px rgba(0, 240, 255, 0.05);
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: var(--cyber-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--cyber-primary);
+  text-shadow: 0 0 15px var(--cyber-glow);
+  line-height: 1;
+}
+
+.statIcon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--cyber-primary);
+  filter: drop-shadow(0 0 15px var(--cyber-glow));
+  opacity: 0.8;
+}
+
+/* ============================================
+   CHART CARDS
+   ============================================ */
+.chartCard {
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 
+    0 0 25px rgba(0, 240, 255, 0.15),
+    inset 0 0 50px rgba(0, 240, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.chartCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary), var(--cyber-primary));
+  background-size: 200% 100%;
+  animation: borderFlow 3s linear infinite;
+}
+
+.chartTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--cyber-primary);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chartTitle::before {
+  content: '▸';
+  color: var(--cyber-secondary);
+  font-size: 1rem;
+}
+
+/* ============================================
+   REVENUE SECTION
+   ============================================ */
+.revenueSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+  .revenueSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   LIST CARDS
+   ============================================ */
+.listCard {
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 
+    0 0 25px rgba(0, 240, 255, 0.15),
+    inset 0 0 50px rgba(0, 240, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.listCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary), var(--cyber-primary));
+  background-size: 200% 100%;
+  animation: borderFlow 3s linear infinite;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--cyber-primary);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardTitle::before {
+  content: '▸';
+  color: var(--cyber-secondary);
+  font-size: 1rem;
+}
+
+/* ============================================
+   COURSES LIST
+   ============================================ */
+.coursesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.courseItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: rgba(0, 240, 255, 0.03);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.courseItem:hover {
+  background: rgba(0, 240, 255, 0.08);
+  border-color: var(--cyber-primary);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+  transform: translateX(5px);
+}
+
+.courseInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.courseThumbnail {
+  width: 4rem;
+  height: 3rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 1px solid var(--cyber-primary);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.courseTitle {
+  font-weight: 600;
+  color: var(--cyber-text);
+  margin-bottom: 0.25rem;
+}
+
+.courseStats {
+  font-size: 0.875rem;
+  color: var(--cyber-text-dim);
+}
+
+.courseRevenue {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--cyber-success);
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+/* ============================================
+   COMPLETION LIST
+   ============================================ */
+.completionList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.completionItem {
+  padding: 1rem;
+  background: rgba(0, 240, 255, 0.03);
+  border-left: 3px solid var(--cyber-primary);
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.completionItem:hover {
+  background: rgba(0, 240, 255, 0.08);
+  border-left-color: var(--cyber-secondary);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+}
+
+.completionCourse {
+  font-weight: 600;
+  color: var(--cyber-text);
+  margin-bottom: 0.5rem;
+}
+
+.completionStats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.completionText {
+  font-size: 0.875rem;
+  color: var(--cyber-text-dim);
+}
+
+.completionRate {
+  font-weight: 700;
+  color: var(--cyber-success);
+  font-size: 1rem;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.progressBar {
+  height: 0.5rem;
+  background: rgba(0, 240, 255, 0.1);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyber-success), var(--cyber-primary));
+  border-radius: 0.25rem;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  transition: width 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.progressFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ============================================
+   STUDENTS LIST
+   ============================================ */
+.studentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.studentItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 240, 255, 0.03);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.studentItem:hover {
+  background: rgba(0, 240, 255, 0.08);
+  border-color: var(--cyber-primary);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+  transform: translateX(5px);
+}
+
+.studentAvatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--cyber-primary);
+  box-shadow: 0 0 15px var(--cyber-glow);
+}
+
+.studentName {
+  font-weight: 600;
+  color: var(--cyber-text);
+  margin-bottom: 0.25rem;
+}
+
+.studentStats {
+  font-size: 0.875rem;
+  color: var(--cyber-text-dim);
+}
+
+/* ============================================
+   TABLE CARD
+   ============================================ */
+.tableCard {
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 
+    0 0 25px rgba(0, 240, 255, 0.15),
+    inset 0 0 50px rgba(0, 240, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.tableCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary), var(--cyber-primary));
+  background-size: 200% 100%;
+  animation: borderFlow 3s linear infinite;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.courseSelect {
+  padding: 0.875rem 1rem;
+  background: var(--cyber-bg-card);
+  border: 1px solid var(--cyber-border);
+  border-radius: 0.5rem;
+  color: var(--cyber-text);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+  min-width: 256px;
+}
+
+.courseSelect:focus {
+  outline: none;
+  border-color: var(--cyber-primary);
+  box-shadow: 0 0 20px var(--cyber-glow);
+}
+
+.courseSelect option {
+  background: var(--cyber-bg-card);
+  color: var(--cyber-text);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+/* Custom scrollbar */
+.tableWrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+  background: rgba(0, 240, 255, 0.05);
+  border-radius: 4px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--cyber-primary), var(--cyber-secondary));
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--cyber-glow);
+}
+
+/* ============================================
+   TABLE
+   ============================================ */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.tableHead {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+  border-bottom: 2px solid var(--cyber-border);
+}
+
+.th,
+.thLeft {
+  padding: 1rem 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--cyber-primary);
+  white-space: nowrap;
+}
+
+.thLeft {
+  text-align: left;
+}
+
+.tableBody {
+  background: transparent;
+}
+
+.tableRow {
+  border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.tableRow:hover {
+  background: rgba(0, 240, 255, 0.05);
+  box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.1);
+}
+
+.td,
+.tdLeft {
+  padding: 1rem 1.5rem;
+  color: var(--cyber-text);
+  text-align: center;
+}
+
+.tdLeft {
+  text-align: left;
+  font-weight: 600;
+}
+
+.quizScore {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 255, 136, 0.15);
+  color: var(--cyber-success);
+  border-radius: 0.375rem;
+  font-weight: 600;
+  border: 1px solid var(--cyber-success);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1024px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .revenueSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .periodSelect,
+  .courseSelect {
+    width: 100%;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statCard {
+    padding: 1.25rem;
+  }
+
+  .statValue {
+    font-size: 1.75rem;
+  }
+
+  .statIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .chartCard,
+  .listCard,
+  .tableCard {
+    padding: 1.25rem;
+  }
+
+  .chartTitle,
+  .cardTitle {
+    font-size: 1.125rem;
+  }
+
+  .courseInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .courseThumbnail {
+    width: 100%;
+    height: auto;
+    max-height: 8rem;
+  }
+
+  .tableHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 640px) {
+  .wrapper {
+    padding: 0 0.5rem;
+  }
+
+  .th,
+  .thLeft,
+  .td,
+  .tdLeft {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .courseItem,
+  .studentItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .courseRevenue {
+    align-self: flex-end;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Apply subtle animations */
+.statCard,
+.chartCard,
+.listCard,
+.tableCard {
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.statIcon {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ============================================
+   CHART CUSTOMIZATION
+   Note: Chart colors are set inline in JSX
+   ============================================ */
+
+/* Tooltip styling is done inline in JSX components */
+
+/* Grid lines use: stroke="rgba(0, 240, 255, 0.1)" */
+/* Axes use: stroke="#94a3b8" */
+/* Lines use Cyberpunk colors: */
+/*   - Enrollment: #00f0ff (cyan) */
+/*   - Monthly Revenue: #00ff88 (green) */
+/*   - Daily Revenue: #ffbd00 (yellow) */
+/*   - Quiz Scores: #ff00ff (magenta) */

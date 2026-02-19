@@ -1,0 +1,107 @@
+@baseUrl = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTQ5NzEzMGRiZTFjNDhmM2IxODU1NiIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcxMzQ1OTYyLCJleHAiOjE3NzE5NTA3NjJ9.9KQ5Bngs7OHCtN1UA4PjeC0ae0zd7Xk_lwPaFt2tlfA
+
+### level id = 6988cf533c48f662d31578c0
+### ===============================
+### Update Video Progress
+### POST /api/progress/video
+### ===============================
+POST {{baseUrl}}/api/progress/video
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "courseId": "6994961f0dbe1c48f3b184ff",
+  "topicId": "699496750dbe1c48f3b18512",
+  "watchedPercentage": 95,
+  "lastWatchedTimestamp": 320
+}
+
+### ===============================
+### Submit Quiz
+### POST /api/progress/quiz
+### ===============================
+POST {{baseUrl}}/api/progress/quiz
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "courseId": "6992e36a1e7bde746e0c874c",
+  "topicId": "6992e42c1e7bde746e0c875f",
+  "answers": [
+    "Browser"
+  ]
+}
+
+### ===============================
+### Submit Task (Mini / Major / Capstone)
+### POST /api/progress/task
+### ===============================
+POST {{baseUrl}}/api/progress/task
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "courseId": "6994961f0dbe1c48f3b184ff",
+  "taskId": " ",
+  "taskType": "mini",
+  "submissionType": "link",
+  "content": "https://github.com/username/project-repo"
+}
+###
+POST {{baseUrl}}/api/progress/task
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "courseId": "6994961f0dbe1c48f3b184ff",
+  "taskId": "699496380dbe1c48f3b18509",
+  "taskType": "major",
+  "submissionType": "link",
+  "content": "https://github.com/username/project-repo"
+}
+
+### ===============================
+### Mark Topic as Complete
+### POST /api/progress/complete-topic
+### ===============================
+POST {{baseUrl}}/api/progress/complete-topic
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "courseId": "6992e36a1e7bde746e0c874c",
+  "topicId": "6992e3761e7bde746e0c8756"
+}
+
+### ===============================
+### Mark Level as Complete 
+### POST /api/progress/complete-level
+### ===============================
+POST {{baseUrl}}/api/progress/complete-level
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "courseId": "6992e36a1e7bde746e0c874c",
+  "levelId": "6992e3761e7bde746e0c8756"
+}
+
+### ===============================
+### Get Course Progress
+### GET /api/progress/:courseId
+### ===============================
+GET {{baseUrl}}/api/progress/6994961f0dbe1c48f3b184ff
+Authorization: Bearer {{token}}
+
+
+###
+# 🔹 Mark Reading Material as Complete
+POST {{baseUrl}}/api/progress/reading
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "courseId": "6994961f0dbe1c48f3b184ff",
+  "topicId": "699496750dbe1c48f3b18512"
+}

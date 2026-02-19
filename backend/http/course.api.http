@@ -1,0 +1,134 @@
+### 📁 `api.http` – Course API Testing
+
+```http
+@baseUrl = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODhiN2RhMDQ4ZmIwOWExMGYxMTRhMyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDc0MDI0OSwiZXhwIjoxNzcxMzQ1MDQ5fQ.L6PGrXiklYswVG_N7LptGR5INQ_sCwDJ6ruWtL2Liuc
+@courseId = 6994961f0dbe1c48f3b184ff
+@levelId = 6988c28c3a4565e21aefb4e9
+```
+
+---
+
+## 🔓 Public APIs
+
+### ✅ Get all published courses
+GET {{baseUrl}}/api/courses
+
+### 🔍 Get all courses with filters
+GET {{baseUrl}}/api/courses?search=javascript&sort=price-low
+
+### 📘 Get single course
+GET {{baseUrl}}/api/courses/{{courseId}}
+
+
+### 🔐 Admin APIs (Requires JWT)
+> ⚠️ Replace `YOUR_ADMIN_JWT_TOKEN`
+
+### ➕ Create course (with thumbnail upload)
+POST {{baseUrl}}/api/courses
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="title"
+
+Complete JavaScript Course
+--boundary
+Content-Disposition: form-data; name="shortDescription"
+
+Learn JS from zero to advanced
+--boundary
+Content-Disposition: form-data; name="price"
+
+1999
+--boundary
+Content-Disposition: form-data; name="category"
+
+Web Development
+--boundary
+Content-Disposition: form-data; name="level"
+
+Beginner
+--boundary
+Content-Disposition: form-data; name="courseType"
+
+Paid
+--boundary
+Content-Disposition: form-data; name="roadmap"
+
+[
+  { "level": 0, "title": "Basics" },
+  { "level": 1, "title": "Advanced JS" }
+]
+--boundary
+Content-Disposition: form-data; name="thumbnail"; filename="thumb.jpg"
+Content-Type: image/jpeg
+
+< ./thumb.jpg
+--boundary--
+
+--boundary
+Content-Disposition: form-data; name="instructorBio"
+
+amazing javascript course by balram patel
+--boundary
+
+--boundary
+Content-Disposition: form-data; name="instructorName"
+
+balram patel
+--boundary
+
+--boundary
+Content-Disposition: form-data; name="fullDescription"
+
+amazing javascript course by balram patel amazing javascript course by balram patel amazing javascript course by balram patel
+--boundary
+
+### ✏️ Update course
+PUT {{baseUrl}}/api/courses/{{courseId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Updated JS Course Title",
+  "price": 2499
+}
+
+### 🗑️ Delete course
+DELETE {{baseUrl}}/api/courses/{{courseId}}
+Authorization: Bearer {{token}}
+
+### 🚀 Toggle publish / unpublish
+PATCH {{baseUrl}}/api/courses/{{courseId}}/publish
+Authorization: Bearer {{token}}
+
+## 📚 Level Management APIs
+
+### ➕ Add level to course
+POST {{baseUrl}}/api/courses/6988ca353a4565e21aefb555/levels
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "levelNumber": 3,
+  "levelTitle": "next js Basics",
+  "levelDescription": "Learn fundamentals",
+  "majorTask": {
+    "title": "Build Calculator App"
+  }
+}
+
+### ✏️ Update level
+PUT {{baseUrl}}/api/courses/{{courseId}}/levels/{{levelId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "levelTitle": "Updated Level Title",
+  "levelDescription": "Updated description"
+}
+
+### 🗑️ Delete level
+DELETE {{baseUrl}}/api/courses/{{courseId}}/levels/{{levelId}}
+Authorization: Bearer {{token}}

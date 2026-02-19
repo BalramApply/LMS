@@ -1,0 +1,100 @@
+@baseUrl = http://localhost:5000
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODhiN2RhMDQ4ZmIwOWExMGYxMTRhMyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDU3NTEwNSwiZXhwIjoxNzcxMTc5OTA1fQ.ptEYiHP-axxakRFsErTLt4X9hIkftgmyh2hx1CCY6DM
+
+###
+# ===============================
+# DASHBOARD STATS
+# GET /api/analytics/dashboard
+# ===============================
+GET {{baseUrl}}/api/analytics/dashboard
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ==================================
+# ENROLLMENTS OVER TIME (Last 30 days)
+# GET /api/analytics/enrollments-over-time
+# ==================================
+GET {{baseUrl}}/api/analytics/enrollments-over-time?period=30
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ==================================
+# ENROLLMENTS OVER TIME (Last 7 days)
+# ==================================
+GET {{baseUrl}}/api/analytics/enrollments-over-time?period=7
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ===============================
+# REVENUE ANALYTICS (MONTHLY)
+# GET /api/analytics/revenue
+# ===============================
+GET {{baseUrl}}/api/analytics/revenue?period=month
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ===============================
+# REVENUE ANALYTICS (DAILY)
+# ===============================
+GET {{baseUrl}}/api/analytics/revenue?period=day
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ===============================
+# BEST SELLING COURSES
+# GET /api/analytics/best-selling-courses
+# ===============================
+GET {{baseUrl}}/api/analytics/best-selling-courses
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ===============================
+# COURSE COMPLETION STATS
+# GET /api/analytics/course-completion
+# ===============================
+GET {{baseUrl}}/api/analytics/course-completion
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ===============================
+# MOST ACTIVE STUDENTS
+# GET /api/analytics/active-students
+# ===============================
+GET {{baseUrl}}/api/analytics/active-students
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ======================================
+# STUDENT PERFORMANCE HEATMAP (BY COURSE)
+# GET /api/analytics/student-performance/:courseId
+# ======================================
+@courseId = 6988ca353a4565e21aefb555
+GET {{baseUrl}}/api/analytics/student-performance/{{courseId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+###
+# ======================================
+# AVERAGE QUIZ SCORES (BY COURSE)
+# GET /api/analytics/quiz-scores/:courseId
+# ======================================
+GET {{baseUrl}}/api/analytics/quiz-scores/{{courseId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json

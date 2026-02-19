@@ -1,0 +1,113 @@
+
+@baseUrl = http://localhost:5000
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTJlMmFmZTdlNTM0N2I2OTUyMzc5NyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MTIzMzk3OSwiZXhwIjoxNzcxODM4Nzc5fQ.c9qWg1Ha3XS6joOk9fOEBnr9go3j4qCwgPhQ1yvfO7g
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTMwNTAzOTQ4ODlmNzJhZTQ3YzAwNiIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcxMzI2NTM1LCJleHAiOjE3NzE5MzEzMzV9.LIJ3EvpknBjJR5x3Y1vfPdxB0vgym0r8iEIDsZLwTBw
+
+@courseId = 6988ca353a4565e21aefb555
+@levelId = 6988cf533c48f662d31578c0
+@topicId = 6988d02c3c48f662d31578c7
+@commentId = 6988d02c3c48f662d31578c7
+
+### 1️⃣ Add Topic (Admin – with Video + PDF)
+### Add Topic (Admin)
+POST {{baseUrl}}/api/topics/{{courseId}}/levels/{{levelId}}/topics
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="topicNumber"
+
+0.1
+--boundary
+Content-Disposition: form-data; name="topicTitle"
+
+Introduction to JavaScript
+--boundary
+Content-Disposition: form-data; name="quiz"
+
+[
+  {
+    "question": "What is JS?",
+    "options": ["Language", "Framework"],
+    "correctAnswer": "Language"
+  }
+]
+--boundary
+Content-Disposition: form-data; name="miniTask"
+
+{
+  "title": "Print Hello World",
+  "description": "Write JS code to print Hello World"
+}
+--boundary
+Content-Disposition: form-data; name="video"; filename="lecture.mp4"
+Content-Type: video/mp4
+
+< ./lecture.mp4
+--boundary
+Content-Disposition: form-data; name="readingMaterial"; filename="notes.pdf"
+Content-Type: application/pdf
+
+< ./notes.pdf
+--boundary--
+
+### 2️⃣ Update Topic
+### Update Topic (Admin)
+PUT {{baseUrl}}/api/topics/{{courseId}}/levels/{{levelId}}/topics/{{topicId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="topicTitle"
+
+Updated JS Basics
+--boundary
+Content-Disposition: form-data; name="quiz"
+
+[
+  {
+    "question": "JS runs in?",
+    "options": ["Browser", "Compiler"],
+    "correctAnswer": "Browser"
+  }
+]
+--boundary--
+
+### 3️⃣ Delete Topic
+### Delete Topic (Admin)
+DELETE {{baseUrl}}/api/topics/{{courseId}}/levels/{{levelId}}/topics/{{topicId}}
+Authorization: Bearer {{adminToken}}
+
+### 4️⃣ Add Comment
+### Add Comment (Student)
+POST {{baseUrl}}/api/topics/6993044394889f72ae47bf9b/levels/6993045294889f72ae47bfa5/topics/6993049594889f72ae47bfae/comments
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGM2OTc2OTFkN2MxOWExNGQwMmI2MCIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcwODE2NDA2LCJleHAiOjE3NzE0MjEyMDZ9.pdf7YpPERU_4JeB3mR_6UDDWoqwQBtoaQ5k9HbxkEis
+Content-Type: application/json
+
+{
+  "comment": "final"
+}
+
+### 5️⃣ Reply to Comment --
+### Reply to Comment (Admin)
+POST {{baseUrl}}/api/topics/{{courseId}}/levels/{{levelId}}/topics/{{topicId}}/comments/{{commentId}}/reply
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "reply": "Glad you found it helpful 😊"
+}
+
+###6️⃣ Delete Comment (Admin)--
+### Delete Comment (Admin)
+DELETE {{baseUrl}}/api/topics/{{courseId}}/levels/{{levelId}}/topics/{{topicId}}/comments/{{commentId}}
+Authorization: Bearer {{adminToken}}
+
+### Add comment to a topic (Student)
+POST http://localhost:5000/api/topics/6988ca353a4565e21aefb555/levels/698b76d2a933ec93b85b54fd/topics/698b76d2a933ec93b85b54fd/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODhjOTJlM2E0NTY1ZTIxYWVmYjU0MSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcwNzAzNjU5LCJleHAiOjE3NzEzMDg0NTl9.hOvf6NvNfTUgib0K72DoKvSatc5NgQA8uGmrIqKECc4
+
+{
+  "comment": "This topic explanation was really helpful 👍"
+}

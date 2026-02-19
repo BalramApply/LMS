@@ -1,0 +1,51 @@
+### ===============================
+### ENV VARIABLES
+### ===============================
+@baseUrl = http://localhost:5000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGM2OTc2OTFkN2MxOWExNGQwMmI2MCIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcwODE2OTI5LCJleHAiOjE3NzE0MjE3Mjl9.p1ZQ898C79tEq6MpRTWR8v8GS7L8ko1Cl3JL7lN9xNA
+@courseId = 698f29142ccf62c7eef8fbe1
+
+### ===============================
+### 1️⃣ Enroll in FREE course
+### POST /api/enrollment/free/:courseId
+### ===============================
+POST {{baseUrl}}/api/enrollment/free/{{courseId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### ===============================
+### 2️⃣ Create Razorpay Order (PAID course)
+### POST /api/enrollment/create-order/:courseId
+### ===============================
+POST {{baseUrl}}/api/enrollment/create-order/{{courseId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### ===============================
+### 3️⃣ Verify Razorpay Payment
+### POST /api/enrollment/verify-payment
+### ===============================
+POST {{baseUrl}}/api/enrollment/verify-payment
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "razorpay_order_id": "order_XXXXXXXXXXXX",
+  "razorpay_payment_id": "pay_XXXXXXXXXXXX",
+  "razorpay_signature": "generated_signature_here",
+  "courseId": "{{courseId}}"
+}
+
+### ===============================
+### 4️⃣ Get My Enrolled Courses
+### GET /api/enrollment/my-courses
+### ===============================
+GET {{baseUrl}}/api/enrollment/my-courses
+Authorization: Bearer {{token}}
+
+### ===============================
+### 5️⃣ Get Enrollment Details for a Course
+### GET /api/enrollment/course/:courseId
+### ===============================
+GET {{baseUrl}}/api/enrollment/course/{{courseId}}
+Authorization: Bearer {{token}}

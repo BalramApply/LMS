@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:5000/api
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTJlMmFmZTdlNTM0N2I2OTUyMzc5NyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MTMwNzE0MSwiZXhwIjoxNzcxOTExOTQxfQ.RxQeyM83xQjwCKrJzYG80I4m5PeXM8VtYiNwcgkkOdQ
+
+### ================================
+### 🔐 Get All Students (Admin)
+### ================================
+GET {{baseUrl}}/admin/students
+Authorization: Bearer {{adminToken}}
+
+### With query params (search + status)
+GET {{baseUrl}}/admin/students?search=john&status=active&sortBy=createdAt
+Authorization: Bearer {{adminToken}}
+
+### ================================
+### 👤 Get Single Student Details
+### ================================
+@studentId = 6988c92e3a4565e21aefb541
+
+GET {{baseUrl}}/admin/students/{{studentId}}
+Authorization: Bearer {{adminToken}}
+
+### ================================
+### 🔁 Toggle Student Active Status
+### ================================
+PATCH {{baseUrl}}/admin/students/{{studentId}}/toggle-status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+### ================================
+### ❌ Delete Student
+### ================================
+DELETE {{baseUrl}}/admin/students/{{studentId}}
+Authorization: Bearer {{adminToken}}
+
+### ================================
+### 📚 Get All Courses (Admin)
+### ================================
+GET {{baseUrl}}/admin/courses
+Authorization: Bearer {{adminToken}}
+
+### With filters
+GET {{baseUrl}}/admin/courses?search=react&category=web&status=published
+Authorization: Bearer {{adminToken}}
+
+### ================================
+### 💬 Get All Comments (Admin) 
+### ================================
+GET {{baseUrl}}/admin/comments
+Authorization: Bearer {{adminToken}}

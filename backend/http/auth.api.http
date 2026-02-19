@@ -1,0 +1,91 @@
+@baseUrl = http://localhost:5000
+@authUrl = {{baseUrl}}/api/auth
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTU1Yzk5YWJkZDVmYTgxN2UzYzU1NyIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcxMzk2MzM5LCJleHAiOjE3NzIwMDExMzl9.EYjBgmlmanYHzEz5tvKikBcJmYwRCIPIk07Ghw9AAfY
+
+### ===============================
+### 1️⃣ REGISTER (Student)
+### ===============================
+POST {{authUrl}}/register
+Content-Type: application/json
+
+{
+  "name": "jha",
+  "email": "jha@test.com",
+  "password": "Test@1234"
+}
+
+### ===============================
+### 2️⃣ LOGIN (Admin / Student)
+### ===============================
+# @name login
+POST {{authUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "day@gmail.com",
+  "password": "Balram@123"
+}
+
+### admin login
+POST {{authUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "admin@lms.com",
+  "password": "Admin@123456"
+}
+
+### ===============================
+### 3️⃣ GET CURRENT USER (ME)
+### ===============================
+GET {{authUrl}}/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTU3N2VjMzQwZDBkYWNmNGYyM2UzOSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcxNDA0OTMzLCJleHAiOjE3NzIwMDk3MzN9.4gdw2qDpApuQjE-Zx6dbEyCJKGZitMM_ZsSRN7Hv38s
+
+### ===============================
+### 4️⃣ LOGOUT USER
+### ===============================
+GET {{authUrl}}/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODhiYjA1M2E0NTY1ZTIxYWVmYjRhNSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcwNTY4NDY4LCJleHAiOjE3NzExNzMyNjh9.PcRdjnUiURAVGtWPdbfTClvjGZ74lHkmEtaMbXEjfR8
+
+### ===============================
+### 5️⃣ UPDATE PROFILE (Name / Email only)
+### ===============================
+PUT {{authUrl}}/updateprofile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODhiYjA1M2E0NTY1ZTIxYWVmYjRhNSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcwNTY4NjI2LCJleHAiOjE3NzExNzM0MjZ9.m2NU-nr4Qd0aeEBR4eb8vRGE3I5O_n4NoweGm5Xjvdg
+Content-Type: application/json
+
+{
+  "name": "Ballu Updated",
+  "email": "ballu_updated@test.com"
+}
+
+### ===============================
+### 6️⃣ UPDATE PROFILE WITH AVATAR (Multipart)
+### ===============================
+PUT {{authUrl}}/updateprofile
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary123
+
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="name"
+
+Ballu Avatar
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="avatar"; filename="avatar.png"
+Content-Type: image/png
+
+< ./avatar.png
+------WebKitFormBoundary123--
+
+### ===============================
+### 7️⃣ UPDATE PASSWORD
+### ===============================
+PUT {{authUrl}}/updatepassword
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODhiYjA1M2E0NTY1ZTIxYWVmYjRhNSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcwNTY4NjI2LCJleHAiOjE3NzExNzM0MjZ9.m2NU-nr4Qd0aeEBR4eb8vRGE3I5O_n4NoweGm5Xjvdg
+Content-Type: application/json
+
+{
+  "currentPassword": "Test@1234",
+  "newPassword": "NewPass@123"
+}
+
