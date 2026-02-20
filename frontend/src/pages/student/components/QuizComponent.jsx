@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiCheckCircle, FiXCircle, FiAward, FiRotateCw } from 'react-icons/fi';
+import { FiCheckCircle, FiXCircle, FiAward, FiRotateCw, FiZoomIn, FiZoomOut } from 'react-icons/fi';
 import Confetti from 'react-confetti';
 import { submitQuiz } from '../../../redux/slices/progressSlice';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ const QuizComponent = ({ quiz, courseId, topicId, onComplete }) => {
   const [submitted, setSubmitted] = useState(false);
   const [result, setResult] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  // Track which question images are zoomed in
+  const [zoomedImage, setZoomedImage] = useState(null);
 
   const handleAnswerChange = (questionIndex, answer) => {
     if (submitted) return;
@@ -98,6 +100,10 @@ const QuizComponent = ({ quiz, courseId, topicId, onComplete }) => {
     return styles.scoreRed;
   };
 
+  // Show explanation once user has picked an answer (even before submit)
+  const shouldShowExplanation = (index) =>
+    question => answers[index] !== undefined && question.explanation;
+
   return (
     <div className={styles.container}>
       {showConfetti && <Confetti recycle={false} numberOfPieces={500} />}
@@ -125,90 +131,137 @@ const QuizComponent = ({ quiz, courseId, topicId, onComplete }) => {
 
       {/* Questions */}
       <div className={styles.questions}>
-        {quiz.map((question, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.08, type: 'spring', stiffness: 120 }}
-            className={styles.questionCard}
-          >
-            <div className={styles.questionHeader}>
-              <div className={styles.questionNumber}>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-              </div>
-              <div className={styles.questionInfo}>
-                <p className={styles.questionText}>{question.question}</p>
-                <span className={styles.questionType}>
-                  {question.type === 'MCQ' && '// MULTIPLE_CHOICE'}
-                  {question.type === 'TrueFalse' && '// TRUE_OR_FALSE'}
-                  {question.type === 'CodeOutput' && '// CODE_OUTPUT'}
-                </span>
-              </div>
-            </div>
+        {quiz.map((question, index) => {
+          const userHasAnswered = answers[index] !== undefined;
+          const showExplanation = userHasAnswered && question.explanation;
+          const imageUrl = question.image?.url;
 
-            {/* Code block */}
-            {question.type === 'CodeOutput' && question.codeSnippet && (
-              <div className={styles.codeBlock}>
-                <div className={styles.codeBlockHeader}>
-                  <span className={`${styles.codeBlockDot} ${styles.dotRed}`} />
-                  <span className={`${styles.codeBlockDot} ${styles.dotYellow}`} />
-                  <span className={`${styles.codeBlockDot} ${styles.dotGreen}`} />
-                  <span className={styles.codeBlockLabel}>snippet.js</span>
+          return (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.08, type: 'spring', stiffness: 120 }}
+              className={styles.questionCard}
+            >
+              <div className={styles.questionHeader}>
+                <div className={styles.questionNumber}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
                 </div>
-                <pre className={styles.codePre}>
-                  <code className={styles.codeText}>{question.codeSnippet}</code>
-                </pre>
+                <div className={styles.questionInfo}>
+                  <p className={styles.questionText}>{question.question}</p>
+                  <span className={styles.questionType}>
+                    {question.questionType === 'MCQ' && '// MULTIPLE_CHOICE'}
+                    {question.questionType === 'True/False' && '// TRUE_OR_FALSE'}
+                    {question.questionType === 'Code-Output' && '// CODE_OUTPUT'}
+                  </span>
+                </div>
               </div>
-            )}
 
-            {/* Options */}
-            <div className={styles.options}>
-              {question.options.map((option, optionIndex) => {
-                const isSelected = answers[index] === option;
-                const isCorrect = option === question.correctAnswer;
-                const userHasAnswered = answers[index] !== undefined;
-                const showIcons = userHasAnswered || submitted;
-
-                return (
-                  <label
-                    key={optionIndex}
-                    className={`${styles.option} ${getOptionClass(question, option, index)}`}
+              {/* ── Question Image ─────────────────────────────────────────── */}
+              {imageUrl && (
+                <div className={styles.questionImageWrapper}>
+                  <div
+                    className={styles.questionImageContainer}
+                    onClick={() => setZoomedImage(zoomedImage === index ? null : index)}
+                    title={zoomedImage === index ? 'Click to collapse' : 'Click to expand'}
                   >
-                    <input
-                      type="radio"
-                      name={`question-${index}`}
-                      value={option}
-                      checked={isSelected}
-                      onChange={(e) => handleAnswerChange(index, e.target.value)}
-                      disabled={submitted}
-                      className={styles.radio}
+                    <img
+                      src={imageUrl}
+                      alt={`Diagram for question ${index + 1}`}
+                      className={`${styles.questionImage} ${zoomedImage === index ? styles.questionImageZoomed : ''}`}
                     />
-                    <span className={styles.optionText}>{option}</span>
-                    {showIcons && isCorrect && (
-                      <FiCheckCircle className={styles.iconCorrect} />
-                    )}
-                    {showIcons && !isCorrect && isSelected && (
-                      <FiXCircle className={styles.iconIncorrect} />
-                    )}
-                  </label>
-                );
-              })}
-            </div>
+                    <button
+                      type="button"
+                      className={styles.imageZoomBtn}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setZoomedImage(zoomedImage === index ? null : index);
+                      }}
+                    >
+                      {zoomedImage === index
+                        ? <FiZoomOut className={styles.imageZoomIcon} />
+                        : <FiZoomIn  className={styles.imageZoomIcon} />}
+                    </button>
+                  </div>
+                </div>
+              )}
 
-            {/* Explanation */}
-            {submitted && question.explanation && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className={styles.explanation}
-              >
-                <p className={styles.explanationTitle}>&gt;_ EXPLANATION</p>
-                <p className={styles.explanationText}>{question.explanation}</p>
-              </motion.div>
-            )}
-          </motion.div>
-        ))}
+              {/* Code block */}
+              {question.questionType === 'Code-Output' && question.codeSnippet && (
+                <div className={styles.codeBlock}>
+                  <div className={styles.codeBlockHeader}>
+                    <span className={`${styles.codeBlockDot} ${styles.dotRed}`} />
+                    <span className={`${styles.codeBlockDot} ${styles.dotYellow}`} />
+                    <span className={`${styles.codeBlockDot} ${styles.dotGreen}`} />
+                    <span className={styles.codeBlockLabel}>snippet.js</span>
+                  </div>
+                  <pre className={styles.codePre}>
+                    <code className={styles.codeText}>{question.codeSnippet}</code>
+                  </pre>
+                </div>
+              )}
+
+              {/* Options */}
+              <div className={styles.options}>
+                {question.options.map((option, optionIndex) => {
+                  const isSelected = answers[index] === option;
+                  const isCorrect = option === question.correctAnswer;
+                  const showIcons = userHasAnswered || submitted;
+
+                  return (
+                    <label
+                      key={optionIndex}
+                      className={`${styles.option} ${getOptionClass(question, option, index)}`}
+                    >
+                      <input
+                        type="radio"
+                        name={`question-${index}`}
+                        value={option}
+                        checked={isSelected}
+                        onChange={(e) => handleAnswerChange(index, e.target.value)}
+                        disabled={submitted}
+                        className={styles.radio}
+                      />
+                      <span className={styles.optionText}>{option}</span>
+                      {showIcons && isCorrect && (
+                        <FiCheckCircle className={styles.iconCorrect} />
+                      )}
+                      {showIcons && !isCorrect && isSelected && (
+                        <FiXCircle className={styles.iconIncorrect} />
+                      )}
+                    </label>
+                  );
+                })}
+              </div>
+
+              {/* ── Explanation — shown immediately after the user picks an answer ── */}
+              <AnimatePresence>
+                {showExplanation && (
+                  <motion.div
+                    key={`explanation-${index}`}
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className={`${styles.explanation} ${
+                      answers[index] === question.correctAnswer
+                        ? styles.explanationCorrect
+                        : styles.explanationIncorrect
+                    }`}
+                  >
+                    <p className={styles.explanationTitle}>
+                      {answers[index] === question.correctAnswer
+                        ? '✓ CORRECT  ·  EXPLANATION'
+                        : '✗ INCORRECT  ·  EXPLANATION'}
+                    </p>
+                    <p className={styles.explanationText}>{question.explanation}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Result */}
@@ -258,6 +311,39 @@ const QuizComponent = ({ quiz, courseId, topicId, onComplete }) => {
           </button>
         </div>
       )}
+
+      {/* ── Image lightbox overlay ─────────────────────────────────────────── */}
+      <AnimatePresence>
+        {zoomedImage !== null && quiz[zoomedImage]?.image?.url && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.lightboxOverlay}
+            onClick={() => setZoomedImage(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+              className={styles.lightboxContent}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={quiz[zoomedImage].image.url}
+                alt={`Diagram for question ${zoomedImage + 1}`}
+                className={styles.lightboxImage}
+              />
+              <button
+                className={styles.lightboxClose}
+                onClick={() => setZoomedImage(null)}
+              >
+                ✕ Close
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

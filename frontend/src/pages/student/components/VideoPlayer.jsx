@@ -1,17 +1,180 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { FiPlay, FiPause, FiVolume2, FiVolumeX, FiMaximize, FiSettings, FiAlertCircle } from 'react-icons/fi';
+import {
+  FiPlay,
+  FiPause,
+  FiVolume2,
+  FiVolumeX,
+  FiMaximize,
+  FiSettings,
+  FiAlertCircle,
+} from 'react-icons/fi';
 import { formatDuration } from '../../../utils/progressCalculator';
 import toast from 'react-hot-toast';
 import api from '../../../api/client';
 import styles from './styles/VideoPlayer.module.css';
 
-const VideoPlayer = ({ 
-  videoUrl, 
-  courseId, 
-  topicId, 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const isYoutubeUrl = (url) =>
+  url && /(?:youtube\.com\/watch\?v=|youtu\.be\/)/.test(url);
+
+function extractYoutubeId(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1);
+    return u.searchParams.get('v') || '';
+  } catch {
+    return '';
+  }
+}
+
+// ─── YouTube Player (iframe via YouTube IFrame API) ───────────────────────────
+const YoutubePlayer = ({ videoUrl, courseId, topicId, onComplete }) => {
+  const containerRef = useRef(null);
+  const playerRef = useRef(null);           // YT.Player instance
+  const intervalRef = useRef(null);
+  const lastUpdateRef = useRef(0);
+  const completedRef = useRef(false);
+  const [ytReady, setYtReady] = useState(!!window.YT?.Player);
+  const [watched, setWatched] = useState(0); // 0-100 percentage
+
+  const videoId = extractYoutubeId(videoUrl);
+
+  // ── Load YouTube IFrame API once ────────────────────────────────────────────
+  useEffect(() => {
+    if (window.YT?.Player) { setYtReady(true); return; }
+
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+
+    window.onYouTubeIframeAPIReady = () => setYtReady(true);
+    return () => { /* script stays — API is global */ };
+  }, []);
+
+  // ── Initialise player once API ready ────────────────────────────────────────
+  useEffect(() => {
+    if (!ytReady || !videoId || !containerRef.current) return;
+
+    playerRef.current = new window.YT.Player(containerRef.current, {
+      videoId,
+      playerVars: {
+        rel: 0,
+        modestbranding: 1,
+        enablejsapi: 1,
+      },
+      events: {
+        onStateChange: handleStateChange,
+      },
+    });
+
+    return () => {
+      clearInterval(intervalRef.current);
+      playerRef.current?.destroy?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ytReady, videoId]);
+
+  const updateProgressAPI = async (percentage, timestamp) => {
+    try {
+      await api.post('/progress/video', {
+        courseId,
+        topicId,
+        watchedPercentage: parseFloat(percentage),
+        lastWatchedTimestamp: parseFloat(timestamp),
+      });
+    } catch (err) {
+      console.error('Error updating video progress:', err);
+    }
+  };
+
+  const handleStateChange = useCallback((event) => {
+    // YT.PlayerState.PLAYING = 1 | ENDED = 0
+    if (event.data === 1) {
+      // Playing — start polling progress
+      intervalRef.current = setInterval(() => {
+        const player = playerRef.current;
+        if (!player?.getCurrentTime) return;
+
+        const current = player.getCurrentTime();
+        const total = player.getDuration();
+        if (!total) return;
+
+        const pct = (current / total) * 100;
+        setWatched(Math.round(pct));
+
+        const now = Date.now();
+        if (now - lastUpdateRef.current >= 5000) {
+          lastUpdateRef.current = now;
+          updateProgressAPI(pct.toFixed(2), current);
+
+          if (pct >= 90 && !completedRef.current) {
+            completedRef.current = true;
+            onComplete?.();
+          }
+        }
+      }, 1000);
+    } else {
+      clearInterval(intervalRef.current);
+    }
+
+    // Video ended (state 0)
+    if (event.data === 0) {
+      const player = playerRef.current;
+      const total = player?.getDuration?.() || 0;
+      updateProgressAPI(100, total);
+      if (!completedRef.current) {
+        completedRef.current = true;
+        onComplete?.();
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseId, topicId]);
+
+  if (!videoId) {
+    return (
+      <div className={styles.errorContainer}>
+        <FiAlertCircle className={styles.errorIcon} />
+        <p className={styles.errorMessage}>Invalid YouTube URL.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.container}>
+      <div
+        className={styles.playerWrapper}
+        style={{ position: 'relative', paddingTop: '56.25%' /* 16:9 */ }}
+      >
+        {/* The IFrame API replaces this div */}
+        <div
+          ref={containerRef}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+          }}
+        />
+        {!ytReady && (
+          <div className={styles.loadingOverlay}>
+            <div className={styles.spinner} />
+            <p className={styles.loadingText}>Loading YouTube player…</p>
+          </div>
+        )}
+      </div>
+      <div className={styles.watchedBadge}>{watched}% watched</div>
+    </div>
+  );
+};
+
+// ─── Native Video Player (Cloudinary / direct URL) ────────────────────────────
+const NativeVideoPlayer = ({
+  videoUrl,
+  courseId,
+  topicId,
   lastTimestamp = 0,
-  onComplete 
+  onComplete,
 }) => {
   const playerRef = useRef(null);
   const lastUpdateRef = useRef(0);
@@ -28,36 +191,24 @@ const VideoPlayer = ({
   const [error, setError] = useState(null);
   const [hasStarted, setHasStarted] = useState(false);
 
-  // Get auth token from localStorage
-  // const getAuthToken = () => {
-  //   return localStorage.getItem('token') || sessionStorage.getItem('token');
-  // };
-
-  // API call to update video progress
   const updateVideoProgressAPI = async (watchedPercentage, lastWatchedTimestamp) => {
-  try {
-    const response = await api.post('/progress/video', {
-      courseId,
-      topicId,
-      watchedPercentage: parseFloat(watchedPercentage),
-      lastWatchedTimestamp: parseFloat(lastWatchedTimestamp)
-    });
-
-    if (response.data.success) {
-      // console.log('Video progress updated successfully');
+    try {
+      await api.post('/progress/video', {
+        courseId,
+        topicId,
+        watchedPercentage: parseFloat(watchedPercentage),
+        lastWatchedTimestamp: parseFloat(lastWatchedTimestamp),
+      });
+    } catch (err) {
+      console.error('Error updating video progress:', err);
     }
+  };
 
-  } catch (error) {
-    console.error('Error updating video progress:', error);
-  }
-};
-
-
+  // Seek to last timestamp on load
   useEffect(() => {
     if (isReady && playerRef.current && lastTimestamp > 0 && !hasStarted) {
       try {
-        const videoElement = playerRef.current;
-        videoElement.currentTime = lastTimestamp;
+        playerRef.current.currentTime = lastTimestamp;
         setHasStarted(true);
       } catch (err) {
         console.error('Error seeking to timestamp:', err);
@@ -67,24 +218,16 @@ const VideoPlayer = ({
 
   const handleProgress = () => {
     if (!seeking && playerRef.current) {
-      const videoElement = playerRef.current;
-      const currentPlayed = videoElement.currentTime / videoElement.duration;
+      const el = playerRef.current;
+      const currentPlayed = el.currentTime / el.duration;
       setPlayed(currentPlayed);
-      
+
       const now = Date.now();
-      
-      // Update backend every 5 seconds
       if (now - lastUpdateRef.current >= 5000) {
         lastUpdateRef.current = now;
-        
         const percentage = (currentPlayed * 100).toFixed(2);
-        
-        updateVideoProgressAPI(percentage, videoElement.currentTime);
-
-        // Call onComplete when video is 90% watched
-        if (percentage >= 90 && onComplete) {
-          onComplete();
-        }
+        updateVideoProgressAPI(percentage, el.currentTime);
+        if (percentage >= 90 && onComplete) onComplete();
       }
     }
   };
@@ -92,98 +235,58 @@ const VideoPlayer = ({
   const handleSeekChange = (e) => {
     const newPlayed = parseFloat(e.target.value);
     setPlayed(newPlayed);
-    if (playerRef.current) {
-      playerRef.current.currentTime = newPlayed * duration;
-    }
-  };
-
-  const handleSeekMouseDown = () => {
-    setSeeking(true);
-  };
-
-  const handleSeekMouseUp = () => {
-    setSeeking(false);
+    if (playerRef.current) playerRef.current.currentTime = newPlayed * duration;
   };
 
   const handlePlayPause = () => {
-    if (playerRef.current) {
-      if (playing) {
-        playerRef.current.pause();
-      } else {
-        playerRef.current.play();
-      }
-      setPlaying(!playing);
-    }
+    if (!playerRef.current) return;
+    if (playing) { playerRef.current.pause(); }
+    else          { playerRef.current.play();  }
+    setPlaying(!playing);
   };
 
   const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (playerRef.current) {
-      playerRef.current.volume = newVolume;
-    }
+    const v = parseFloat(e.target.value);
+    setVolume(v);
+    if (playerRef.current) playerRef.current.volume = v;
   };
 
   const handleToggleMute = () => {
-    if (playerRef.current) {
-      playerRef.current.muted = !muted;
-      setMuted(!muted);
-    }
+    if (!playerRef.current) return;
+    playerRef.current.muted = !muted;
+    setMuted(!muted);
   };
 
   const handlePlaybackRateChange = (rate) => {
     setPlaybackRate(rate);
-    if (playerRef.current) {
-      playerRef.current.playbackRate = rate;
-    }
+    if (playerRef.current) playerRef.current.playbackRate = rate;
   };
 
   const handleFullscreen = () => {
-    const elem = playerRef.current;
-    if (elem) {
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-      }
-    }
-  };
-
-  const handleReady = () => {
-    setIsReady(true);
-    setLoading(false);
-    if (playerRef.current) {
-      setDuration(playerRef.current.duration);
-    }
-  };
-
-  const handleError = (error) => {
-    console.error('Video player error:', error);
-    setError('Failed to load video. Please try again later.');
-    setLoading(false);
-    toast.error('Failed to load video');
+    const el = playerRef.current;
+    if (!el) return;
+    (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen)?.call(el);
   };
 
   const handleLoadedMetadata = () => {
     if (playerRef.current) {
       setDuration(playerRef.current.duration);
-      handleReady();
+      setIsReady(true);
+      setLoading(false);
     }
   };
+
+  const handleError = () => {
+    setError('Failed to load video. Please try again later.');
+    setLoading(false);
+    toast.error('Failed to load video');
+  };
+
   const handleVideoEnd = async () => {
-  if (!playerRef.current) return;
-
-  const videoElement = playerRef.current;
-
-  await updateVideoProgressAPI(100, videoElement.duration);
-
-  if (onComplete) {
-    onComplete();
-  }
-};
-
+    if (!playerRef.current) return;
+    await updateVideoProgressAPI(100, playerRef.current.duration);
+    onComplete?.();
+  };
 
   if (error) {
     return (
@@ -191,11 +294,8 @@ const VideoPlayer = ({
         <FiAlertCircle className={styles.errorIcon} />
         <h3 className={styles.errorTitle}>Video Error</h3>
         <p className={styles.errorMessage}>{error}</p>
-        <button 
-          onClick={() => {
-            setError(null);
-            setLoading(true);
-          }}
+        <button
+          onClick={() => { setError(null); setLoading(true); }}
           className={styles.retryButton}
         >
           Retry
@@ -205,7 +305,7 @@ const VideoPlayer = ({
   }
 
   return (
-    <div 
+    <div
       className={styles.container}
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(playing ? false : true)}
@@ -219,19 +319,17 @@ const VideoPlayer = ({
           onError={handleError}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
-          onEnded={handleVideoEnd}   // 🔥 ADD THIS
+          onEnded={handleVideoEnd}
           className={styles.videoElement}
         />
 
-        {/* Loading Spinner */}
         {loading && (
           <div className={styles.loadingOverlay}>
-            <div className={styles.spinner}></div>
-            <p className={styles.loadingText}>Loading video...</p>
+            <div className={styles.spinner} />
+            <p className={styles.loadingText}>Loading video…</p>
           </div>
         )}
 
-        {/* Play/Pause Overlay */}
         {!playing && !loading && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -245,7 +343,6 @@ const VideoPlayer = ({
           </motion.div>
         )}
 
-        {/* Custom Controls */}
         {showControls && !loading && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -261,8 +358,8 @@ const VideoPlayer = ({
                 step="any"
                 value={played}
                 onChange={handleSeekChange}
-                onMouseDown={handleSeekMouseDown}
-                onMouseUp={handleSeekMouseUp}
+                onMouseDown={() => setSeeking(true)}
+                onMouseUp={() => setSeeking(false)}
                 className={styles.progressSlider}
                 style={{
                   background: `linear-gradient(to right, #00f0ff 0%, #00f0ff ${played * 100}%, #4b5563 ${played * 100}%, #4b5563 100%)`,
@@ -277,29 +374,17 @@ const VideoPlayer = ({
             {/* Control Buttons */}
             <div className={styles.controlsBar}>
               <div className={styles.controlsLeft}>
-                {/* Play/Pause */}
-                <button
-                  onClick={handlePlayPause}
-                  className={styles.controlButton}
-                >
-                  {playing ? (
-                    <FiPause className={styles.controlIcon} />
-                  ) : (
-                    <FiPlay className={styles.controlIcon} />
-                  )}
+                <button onClick={handlePlayPause} className={styles.controlButton}>
+                  {playing
+                    ? <FiPause className={styles.controlIcon} />
+                    : <FiPlay  className={styles.controlIcon} />}
                 </button>
 
-                {/* Volume */}
                 <div className={styles.volumeControl}>
-                  <button
-                    onClick={handleToggleMute}
-                    className={styles.controlButton}
-                  >
-                    {muted || volume === 0 ? (
-                      <FiVolumeX className={styles.controlIcon} />
-                    ) : (
-                      <FiVolume2 className={styles.controlIcon} />
-                    )}
+                  <button onClick={handleToggleMute} className={styles.controlButton}>
+                    {muted || volume === 0
+                      ? <FiVolumeX className={styles.controlIcon} />
+                      : <FiVolume2 className={styles.controlIcon} />}
                   </button>
                   <input
                     type="range"
@@ -312,14 +397,12 @@ const VideoPlayer = ({
                   />
                 </div>
 
-                {/* Time Display */}
                 <span className={styles.timeText}>
                   {formatDuration(played * duration)} / {formatDuration(duration)}
                 </span>
               </div>
 
               <div className={styles.controlsRight}>
-                {/* Playback Speed */}
                 <div className={styles.speedControl}>
                   <button className={styles.speedButton}>
                     <FiSettings className={styles.controlIcon} />
@@ -330,7 +413,9 @@ const VideoPlayer = ({
                       <button
                         key={rate}
                         onClick={() => handlePlaybackRateChange(rate)}
-                        className={`${styles.speedOption} ${playbackRate === rate ? styles.speedOptionActive : ''}`}
+                        className={`${styles.speedOption} ${
+                          playbackRate === rate ? styles.speedOptionActive : ''
+                        }`}
                       >
                         {rate}x
                       </button>
@@ -338,11 +423,7 @@ const VideoPlayer = ({
                   </div>
                 </div>
 
-                {/* Fullscreen */}
-                <button
-                  onClick={handleFullscreen}
-                  className={styles.controlButton}
-                >
+                <button onClick={handleFullscreen} className={styles.controlButton}>
                   <FiMaximize className={styles.controlIcon} />
                 </button>
               </div>
@@ -351,11 +432,34 @@ const VideoPlayer = ({
         )}
       </div>
 
-      {/* Progress Indicator */}
       <div className={styles.watchedBadge}>
         {Math.round(played * 100)}% watched
       </div>
     </div>
+  );
+};
+
+// ─── Public wrapper — auto-selects the right player ──────────────────────────
+const VideoPlayer = ({ videoUrl, courseId, topicId, lastTimestamp = 0, onComplete }) => {
+  if (isYoutubeUrl(videoUrl)) {
+    return (
+      <YoutubePlayer
+        videoUrl={videoUrl}
+        courseId={courseId}
+        topicId={topicId}
+        onComplete={onComplete}
+      />
+    );
+  }
+
+  return (
+    <NativeVideoPlayer
+      videoUrl={videoUrl}
+      courseId={courseId}
+      topicId={topicId}
+      lastTimestamp={lastTimestamp}
+      onComplete={onComplete}
+    />
   );
 };
 

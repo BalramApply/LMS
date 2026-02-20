@@ -437,7 +437,6 @@ drawDiamond(width / 2, height - 95, 10, '#ff00ff');
 drawDiamond(width / 2 - 30, height - 95, 6, '#00ffff');
 drawDiamond(width / 2 + 30, height - 95, 6, '#00ffff');
 
-  // ── 7. DOUBLE GOLD BORDER ───────────────────────────────
   // ── 7. DOUBLE NEON BORDER ───────────────────────────────
 // Outer magenta glow border
 ctx.shadowColor = '#ff00ff';
@@ -546,7 +545,6 @@ ctx.fillText('Certificate', width / 2, 165);
 ctx.shadowColor = 'transparent';
 ctx.shadowBlur = 0;
 
-  // ── 11. "OF COMPLETION" with flanking ornaments ──────────
   // ── 11. "OF COMPLETION" ──────────────────────────────────
 ctx.shadowColor = '#00ffff';
 ctx.shadowBlur = 15;
@@ -664,7 +662,6 @@ ctx.fillStyle = '#7788aa';
 ctx.font = '20px sans-serif';
 ctx.fillText('Course Completed Date', width - 185, 1088);
 
-  // ── 20. QR CODE ──────────────────────────────────────────
 // ── 20. QR CODE ──────────────────────────────────────────
 if (certificate.qrCode) {
   try {
