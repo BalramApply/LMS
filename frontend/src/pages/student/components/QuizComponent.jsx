@@ -100,10 +100,6 @@ const QuizComponent = ({ quiz, courseId, topicId, onComplete }) => {
     return styles.scoreRed;
   };
 
-  // Show explanation once user has picked an answer (even before submit)
-  const shouldShowExplanation = (index) =>
-    question => answers[index] !== undefined && question.explanation;
-
   return (
     <div className={styles.container}>
       {showConfetti && <Confetti recycle={false} numberOfPieces={500} />}
