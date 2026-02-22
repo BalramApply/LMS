@@ -1,0 +1,143 @@
+### ============================================
+### VARIABLES
+### ============================================
+@baseUrl = http://localhost:5000/api/mock-tests
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTZhOTI2OTAzZDcyNDhlNWUyMWRkOSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MTY5Mzc0NCwiZXhwIjoxNzcyMjk4NTQ0fQ.RQiK3-ID7quB2B8YehLmr-Hsa_ARgOtPJzYi5lWuGts
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTczMWNjZjJmMzBlY2UwMmJhNTM0MSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcxNjk0MzUxLCJleHAiOjE3NzIyOTkxNTF9.eOYY_B--onrt5ZYBy3ET0RQ95OHVrVQGlf72niuV6jI
+@testId = 6999e8bffb51d6dae4026b4b
+@questionId = 6999e879fb51d6dae4026b36
+@attemptId = 6999f1fa792de90e3356cfc4
+@razorpayOrderId = RAZORPAY_ORDER_ID
+
+### ============================================
+### ADMIN ROUTES
+### ============================================
+
+### 1️⃣ Create Mock Test (Admin)
+POST {{baseUrl}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "JavaScript Mock Test 1",
+  "description": "Basic JS Test",
+  "duration": 60,
+  "markPerQuestion": 1,
+  "negativeMarking": true,
+  "negativeMarkValue": 0.25,
+  "accessType": "Free",
+  "price": 0
+}
+
+### 2️⃣ Get All Mock Tests (Admin)
+GET {{baseUrl}}/admin
+Authorization: Bearer {{adminToken}}
+
+### 3️⃣ Update Mock Test
+PUT {{baseUrl}}/{{testId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Updated JS Mock Test",
+  "duration": 90
+}
+
+### 4️⃣ Delete Mock Test
+DELETE {{baseUrl}}/{{testId}}
+Authorization: Bearer {{adminToken}}
+
+### 5️⃣ Toggle Publish
+PATCH {{baseUrl}}/{{testId}}/publish
+Authorization: Bearer {{adminToken}}
+
+### ============================================
+### QUESTIONS (ADMIN)
+### ============================================
+
+### 6️⃣ Add Question
+POST {{baseUrl}}/{{testId}}/questions
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "question": "What is JavaScript?",
+  "options": ["Programming Language", "Database", "Server", "Browser"],
+  "correctAnswer": "Programming Language",
+  "explanation": "JavaScript is a scripting language."
+}
+
+### 7️⃣ Update Question
+PUT {{baseUrl}}/{{testId}}/questions/{{questionId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "question": "What is Node.js?"
+}
+
+### 8️⃣ Delete Question
+DELETE {{baseUrl}}/{{testId}}/questions/{{questionId}}
+Authorization: Bearer {{adminToken}}
+
+### 9️⃣ Get Test Attempts (Admin Analytics)
+GET {{baseUrl}}/{{testId}}/attempts
+Authorization: Bearer {{adminToken}}
+
+### ============================================
+### STUDENT ROUTES
+### ============================================
+
+### 🔟 Get Published Mock Tests
+GET {{baseUrl}}
+Authorization: Bearer {{studentToken}}
+
+### 1️⃣1️⃣ Get Single Mock Test
+GET {{baseUrl}}/{{testId}}
+Authorization: Bearer {{studentToken}}
+
+### 1️⃣2️⃣ Create Razorpay Order (Paid Test)
+POST {{baseUrl}}/{{testId}}/create-order
+Authorization: Bearer {{studentToken}}
+
+### 1️⃣3️⃣ Verify Payment
+POST {{baseUrl}}/verify-payment
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "razorpay_order_id": "ORDER_ID",
+  "razorpay_payment_id": "PAYMENT_ID",
+  "razorpay_signature": "SIGNATURE",
+  "mockTestId": "{{testId}}"
+}
+
+### 1️⃣4️⃣ Start Attempt
+POST {{baseUrl}}/{{testId}}/start
+Authorization: Bearer {{studentToken}}
+
+### 1️⃣5️⃣ Submit Attempt
+POST {{baseUrl}}/attempts/{{attemptId}}/submit
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "answers": [
+    {
+      "questionId": "6999e8e7fb51d6dae4026b56", 
+      "selectedOption": "Programming Language" 
+    },
+    {
+      "questionId": "6999e9c5fb51d6dae4026c03",
+      "selectedOption": "Server"
+    }
+  ]
+}
+
+### 1️⃣6️⃣ Get Attempt Result
+GET {{baseUrl}}/attempts/{{attemptId}}/result
+Authorization: Bearer {{studentToken}}
+
+### 1️⃣7️⃣ Get My Attempts
+GET {{baseUrl}}/my-attempts
+Authorization: Bearer {{studentToken}}

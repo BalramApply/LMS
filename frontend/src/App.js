@@ -32,6 +32,12 @@ import ManageStudents from './pages/admin/ManageStudents';
 import AnalyticsDashboard from './pages/admin/AnalyticsDashboard';
 import CommentModeration from './pages/admin/CommentModeration';
 
+// mock test
+import MockTests       from './pages/student/MockTests';
+import TakeTest        from './pages/student/TakeTest';
+import MockTestResult  from './pages/student/MockTestResult';
+import ManageMockTests from './pages/admin/ManageMockTests';
+
 // 404 Page
 import NotFound from './pages/public/NotFound';
 
@@ -63,9 +69,36 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/courses" element={<ExploreCourses />} />
           <Route path="/courses/:id" element={<CourseDetails />} />
-           <Route path="/verify-certificate" element={<VerifyCertificate />} />
+          <Route path="/verify-certificate" element={<VerifyCertificate />} />
           <Route path="/verify-certificate/:certificateId" element={<VerifyCertificate />} />
         
+          <Route
+            path="/mock-tests"
+            element={
+              <ProtectedRoute role="student">
+                <MockTests />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/mock-tests/:testId/take"
+            element={
+              <ProtectedRoute role="student">
+                <TakeTest />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/mock-tests/result/:attemptId"
+            element={
+              <ProtectedRoute role="student">
+                <MockTestResult />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/dashboard"
             element={
@@ -74,6 +107,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/learning/:courseId"
             element={
@@ -100,6 +134,15 @@ function App() {
           />
 
          
+          <Route
+            path="/admin/mock-tests"
+            element={
+              <ProtectedRoute role="admin">
+                <ManageMockTests />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/admin"
             element={

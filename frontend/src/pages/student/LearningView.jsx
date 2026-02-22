@@ -20,10 +20,10 @@ import {
   markReadingComplete,
 } from "../../redux/slices/progressSlice";
 import VideoPlayer from "../../pages/student/components/VideoPlayer";
+import ReadingMaterial from "../../pages/student/components/ReadingMaterial";
 import QuizComponent from "../../pages/student/components/QuizComponent";
 import TaskSubmission from "../../pages/student/components/TaskSubmission";
 import CommentSection from "../../pages/student/components/CommentSection";
-import ReadingMaterial from "../../pages/student/components/ReadingMaterial";
 import Loader from "../../components/common/Loader";
 import {
   isLevelUnlocked,

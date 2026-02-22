@@ -15,6 +15,7 @@ const progressRoutes = require('./routes/progressRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const mockTestRoutes = require('./routes/mockTestRoutes');
 
 // Connect to database
 connectDB();
@@ -48,7 +49,8 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/admin', adminRoutes);
- 
+app.use('/api/mock-tests', mockTestRoutes);
+
 // Health check route
 app.get('/health', (req, res) => {
   res.status(200).json({

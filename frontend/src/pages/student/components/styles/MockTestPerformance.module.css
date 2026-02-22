@@ -1,0 +1,439 @@
+/* ============================================================
+   MOCKTESTPERFORMANCE.MODULE.CSS — CYBERPUNK
+   ============================================================ */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  font-family: 'Share Tech Mono', monospace;
+  color: #e0eaff;
+  width: 100%;
+}
+
+/* ── Section Header ─────────────────────────────────────── */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #1a2a5e;
+  position: relative;
+}
+
+/* Neon scan line on border */
+.sectionHeader::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #f5e642, #00f5ff, transparent);
+  /* animation: scanH 4s linear infinite; */
+  pointer-events: none;
+}
+
+.sectionTitle {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #e0eaff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sectionTitle svg {
+  color: #f5e642;
+  filter: drop-shadow(0 0 6px #f5e64266);
+  flex-shrink: 0;
+}
+
+.viewAllLink {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(0.6rem, 1.2vw, 0.68rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #00f5ff;
+  text-decoration: none;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid #00f5ff;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  box-shadow: 0 0 8px #00f5ff33;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.viewAllLink:hover {
+  background: rgba(0,245,255,0.1);
+  box-shadow: 0 0 18px #00f5ff66;
+}
+
+/* ── Stats Grid ─────────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.6rem, 2vw, 1rem);
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: clamp(0.85rem, 2vw, 1.1rem) clamp(0.75rem, 2vw, 1rem);
+  background: #0b1230;
+  border: 1px solid #1a2a5e;
+  border-bottom: 2px solid #f5e642;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(245,230,66,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.statCard:hover {
+  border-color: #f5e642;
+  box-shadow: 0 0 20px #f5e64222, inset 0 0 10px rgba(245,230,66,0.04);
+}
+
+.statIcon {
+  width: clamp(34px, 5vw, 40px);
+  height: clamp(34px, 5vw, 40px);
+  min-width: clamp(34px, 5vw, 40px);
+  background: rgba(245,230,66,0.08);
+  border: 1px solid #f5e64244;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+  flex-shrink: 0;
+}
+
+.statIcon svg {
+  font-size: clamp(0.9rem, 1.8vw, 1rem);
+  color: #f5e642;
+  filter: drop-shadow(0 0 4px #f5e64288);
+}
+
+.statLabel {
+  font-size: clamp(0.58rem, 1.2vw, 0.65rem);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #6a84c8;
+  margin-bottom: 0.2rem;
+}
+
+.statValue {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  font-weight: 900;
+  color: #f5e642;
+  text-shadow: 0 0 12px #f5e64266;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+/* ── Table Wrapper ──────────────────────────────────────── */
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: #070d1f;
+  border: 1px solid #1a2a5e;
+  border-top: 2px solid #00f5ff;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #1a2a5e transparent;
+}
+
+.tableWrapper::-webkit-scrollbar       { height: 4px; }
+.tableWrapper::-webkit-scrollbar-thumb { background: #1a2a5e; }
+
+/* Scan line on top */
+.tableWrapper::before {
+  content: '';
+  position: absolute;
+  top: 2px; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00f5ff, transparent);
+  /* animation: scanH 4s linear infinite; */
+  pointer-events: none;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 560px;
+}
+
+/* thead */
+.table thead tr {
+  background: rgba(0,245,255,0.05);
+  border-bottom: 1px solid #1a2a5e;
+}
+
+.table thead th {
+  padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(0.75rem, 1.5vw, 1rem);
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(0.55rem, 1.1vw, 0.62rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #00f5ff;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* tbody */
+.table tbody tr {
+  border-bottom: 1px solid #0f1a35;
+  transition: background 0.15s;
+}
+
+.table tbody tr:hover { background: rgba(0,245,255,0.03); }
+.table tbody tr:last-child { border-bottom: none; }
+
+.table tbody td {
+  padding: clamp(0.6rem, 1.5vw, 0.8rem) clamp(0.75rem, 1.5vw, 1rem);
+  font-size: clamp(0.72rem, 1.3vw, 0.8rem);
+  color: #c8d8f8;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.testNameCell {
+  color: #e0eaff !important;
+  font-weight: 600;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Score badges */
+.score {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: 1px solid;
+}
+
+.scoreHigh {
+  border-color: #00f5ff44;
+  color: #00f5ff;
+  background: rgba(0,245,255,0.08);
+  text-shadow: 0 0 8px #00f5ff88;
+}
+
+.scoreMid {
+  border-color: #f5e64244;
+  color: #f5e642;
+  background: rgba(245,230,66,0.07);
+  text-shadow: 0 0 8px #f5e64288;
+}
+
+.scoreLow {
+  border-color: #ff2d7844;
+  color: #ff2d78;
+  background: rgba(255,45,120,0.07);
+  text-shadow: 0 0 8px #ff2d7888;
+}
+
+/* Accuracy bar */
+.accuracyBar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 100px;
+}
+
+.accuracyFill {
+  height: 4px;
+  flex: 1;
+  background: linear-gradient(90deg, #00f5ff, #bf00ff);
+  box-shadow: 0 0 6px #00f5ff55;
+  position: relative;
+  max-width: 70px;
+  min-width: 0;
+}
+
+/* Track behind fill */
+.accuracyBar::before {
+  content: '';
+  position: absolute;
+  /* rendered via the parent flex context — handled purely via fill */
+}
+
+.accuracyText {
+  font-size: 0.68rem;
+  color: #6a84c8;
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* Wrap bar in a relative container */
+.accuracyBar {
+  position: relative;
+}
+
+/* Time cell */
+.time {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  color: #6a84c8;
+}
+.time svg { font-size: 0.75rem; flex-shrink: 0; }
+
+/* Review link */
+.reviewLink {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  color: #bf00ff;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid #bf00ff55;
+  background: rgba(191,0,255,0.06);
+  transition: all 0.18s;
+  white-space: nowrap;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.reviewLink:hover {
+  border-color: #bf00ff;
+  background: rgba(191,0,255,0.15);
+  box-shadow: 0 0 10px #bf00ff44;
+  color: #e0b0ff;
+}
+
+/* ── Loading skeleton ────────────────────────────────────── */
+.loadingRows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.skeletonRow {
+  height: 50px;
+  background: linear-gradient(90deg, #0b1230 25%, #0f1a40 50%, #0b1230 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+  border: 1px solid #1a2a5e;
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: clamp(2rem, 5vw, 3.5rem) 1.5rem;
+  border: 1px dashed #1a2a5e;
+  color: #6a84c8;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 2.2rem;
+  color: #1a2a5e;
+  filter: drop-shadow(0 0 6px #1a2a5e);
+}
+
+.empty p {
+  font-size: clamp(0.78rem, 1.5vw, 0.85rem);
+  letter-spacing: 0.06em;
+}
+
+.emptyBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1.25rem;
+  background: transparent;
+  border: 1px solid #00f5ff;
+  color: #00f5ff;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  box-shadow: 0 0 10px #00f5ff33;
+  transition: all 0.2s;
+}
+.emptyBtn:hover {
+  background: rgba(0,245,255,0.1);
+  box-shadow: 0 0 20px #00f5ff66;
+}
+
+/* ── Keyframes ────────────────────────────────────────────── */
+@keyframes scanH {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ══ RESPONSIVE ═════════════════════════════════════════════ */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .statsGrid { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+  .statCard  { flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 0.85rem 0.75rem; }
+  .statIcon  { width: 32px; height: 32px; min-width: 32px; }
+  .viewAllLink { clip-path: none; padding: 0.3rem 0.75rem; }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .statsGrid   { grid-template-columns: repeat(3, 1fr); }
+  .statValue   { font-size: 0.95rem; }
+  .statLabel   { font-size: 0.55rem; }
+  .table       { min-width: 480px; }
+  .testNameCell{ max-width: 130px; }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .statsGrid { grid-template-columns: 1fr 1fr; }
+  /* 3rd stat goes full width on small screens */
+  .statCard:last-child { grid-column: 1 / -1; flex-direction: row; align-items: center; }
+
+  .sectionTitle  { font-size: 0.8rem; }
+  .reviewLink    { clip-path: none; }
+  .emptyBtn      { clip-path: none; }
+  .viewAllLink   { clip-path: none; font-size: 0.6rem; }
+}
+
+/* Extra small */
+@media (max-width: 360px) {
+  .statsGrid { grid-template-columns: 1fr; }
+  .statCard:last-child { grid-column: auto; }
+  .statCard  { flex-direction: row; }
+  .table     { min-width: 420px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sectionHeader::after,
+  .tableWrapper::before { animation: none; }
+  .skeletonRow          { animation: none; background: #0b1230; }
+}

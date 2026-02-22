@@ -125,6 +125,16 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    mockTests: [
+  {
+    mockTest:  { type: mongoose.Schema.Types.ObjectId, ref: 'MockTest' },
+    attemptId: { type: mongoose.Schema.Types.ObjectId, ref: 'MockTestAttempt' },
+    score:     Number,
+    totalMarks: Number,
+    accuracy:  Number,
+    attemptedAt: { type: Date, default: Date.now },
+  },
+],
   },
   {
     timestamps: true,

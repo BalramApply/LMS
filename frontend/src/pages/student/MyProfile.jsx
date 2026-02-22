@@ -1,44 +1,45 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { FiLock, FiSave, FiCamera } from 'react-icons/fi';
-import { updateProfile, updatePassword } from '../../redux/slices/authSlice';
-import PasswordStrengthIndicator from '../../pages/auth/components/PasswordStrengthIndicator';
-import { isPasswordValid } from '../../utils/passwordStrength';
-import { getInitials, getAvatarColor } from '../../utils/formatters';
-import toast from 'react-hot-toast';
-import styles from './styles/MyProfile.module.css';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FiLock, FiSave, FiCamera } from "react-icons/fi";
+import { updateProfile, updatePassword } from "../../redux/slices/authSlice";
+import PasswordStrengthIndicator from "../../pages/auth/components/PasswordStrengthIndicator";
+import { isPasswordValid } from "../../utils/passwordStrength";
+import { getInitials, getAvatarColor } from "../../utils/formatters";
+import toast from "react-hot-toast";
+import MockTestPerformance from "./components/MockTestPerformance";
+import styles from "./styles/MyProfile.module.css";
 
 const MyProfile = () => {
   const dispatch = useDispatch();
   const { user, isLoading } = useSelector((state) => state.auth);
 
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState("profile");
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar?.url || null);
   const [avatarFile, setAvatarFile] = useState(null);
 
   const [profileData, setProfileData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
+    name: user?.name || "",
+    email: user?.email || "",
   });
 
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const getAvatarClass = (name) => {
     const colorClass = getAvatarColor(name);
     // Map Tailwind color classes to CSS module classes
     const colorMap = {
-      'bg-primary-500': styles.bgPrimary,
-      'bg-secondary-500': styles.bgSecondary,
-      'bg-green-500': styles.bgSuccess,
-      'bg-yellow-500': styles.bgWarning,
-      'bg-red-500': styles.bgDanger,
-      'bg-blue-500': styles.bgInfo,
-      'bg-purple-500': styles.bgPurple,
-      'bg-pink-500': styles.bgPink,
+      "bg-primary-500": styles.bgPrimary,
+      "bg-secondary-500": styles.bgSecondary,
+      "bg-green-500": styles.bgSuccess,
+      "bg-yellow-500": styles.bgWarning,
+      "bg-red-500": styles.bgDanger,
+      "bg-blue-500": styles.bgInfo,
+      "bg-purple-500": styles.bgPurple,
+      "bg-pink-500": styles.bgPink,
     };
     return colorMap[colorClass] || styles.bgPrimary;
   };
@@ -57,15 +58,15 @@ const MyProfile = () => {
     e.preventDefault();
 
     if (!profileData.name.trim()) {
-      return toast.error('Name is required');
+      return toast.error("Name is required");
     }
 
     try {
       const formData = new FormData();
-      formData.append('name', profileData.name);
+      formData.append("name", profileData.name);
 
       if (avatarFile) {
-        formData.append('avatar', avatarFile);
+        formData.append("avatar", avatarFile);
       }
 
       await dispatch(updateProfile(formData)).unwrap();
@@ -76,15 +77,15 @@ const MyProfile = () => {
     e.preventDefault();
 
     if (!passwordData.currentPassword) {
-      return toast.error('Current password is required');
+      return toast.error("Current password is required");
     }
 
     if (!isPasswordValid(passwordData.newPassword)) {
-      return toast.error('New password does not meet requirements');
+      return toast.error("New password does not meet requirements");
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      return toast.error('Passwords do not match');
+      return toast.error("Passwords do not match");
     }
 
     try {
@@ -92,13 +93,13 @@ const MyProfile = () => {
         updatePassword({
           currentPassword: passwordData.currentPassword,
           newPassword: passwordData.newPassword,
-        })
+        }),
       ).unwrap();
 
       setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
       });
     } catch (error) {}
   };
@@ -109,11 +110,9 @@ const MyProfile = () => {
         <h1 className={styles.pageTitle}>My Profile</h1>
 
         <div className={styles.grid}>
-          
           {/* Sidebar */}
           <div className={styles.sidebar}>
             <div className={styles.sidebarCard}>
-              
               {/* Avatar Section */}
               <div className={styles.avatarContainer}>
                 {avatarPreview ? (
@@ -123,7 +122,9 @@ const MyProfile = () => {
                     className={styles.avatarImage}
                   />
                 ) : (
-                  <div className={`${styles.avatarPlaceholder} ${getAvatarClass(user?.name)}`}>
+                  <div
+                    className={`${styles.avatarPlaceholder} ${getAvatarClass(user?.name)}`}
+                  >
                     {getInitials(user?.name)}
                   </div>
                 )}
@@ -145,38 +146,41 @@ const MyProfile = () => {
 
             <div className={styles.tabsCard}>
               <button
-                onClick={() => setActiveTab('profile')}
+                onClick={() => setActiveTab("profile")}
                 className={`${styles.tabButton} ${
-                  activeTab === 'profile' ? styles.tabButtonActive : ''
+                  activeTab === "profile" ? styles.tabButtonActive : ""
                 }`}
               >
                 Profile Info
               </button>
 
               <button
-                onClick={() => setActiveTab('password')}
+                onClick={() => setActiveTab("password")}
                 className={`${styles.tabButton} ${
-                  activeTab === 'password' ? styles.tabButtonActive : ''
+                  activeTab === "password" ? styles.tabButtonActive : ""
                 }`}
               >
                 Change Password
               </button>
-            </div>
-          </div>
 
+
+              
+            </div>
+            
+          </div>
+                <button onClick={() => setActiveTab("mockTests")} className={styles.tabButton}>
+                {activeTab === "mockTests" && <MockTestPerformance />}
+                MT
+              </button>
           {/* Main Content */}
           <div className={styles.mainContent}>
-            {activeTab === 'profile' && (
+            {activeTab === "profile" && (
               <div className={styles.contentCard}>
-                <h2 className={styles.contentTitle}>
-                  Profile Information
-                </h2>
+                <h2 className={styles.contentTitle}>Profile Information</h2>
 
                 <form onSubmit={handleProfileUpdate} className={styles.form}>
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>
-                      Full Name
-                    </label>
+                    <label className={styles.label}>Full Name</label>
                     <input
                       type="text"
                       value={profileData.name}
@@ -191,9 +195,7 @@ const MyProfile = () => {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>
-                      Email
-                    </label>
+                    <label className={styles.label}>Email</label>
                     <input
                       type="email"
                       value={profileData.email}
@@ -209,18 +211,16 @@ const MyProfile = () => {
                       className={styles.submitButton}
                     >
                       <FiSave className={styles.buttonIcon} />
-                      {isLoading ? 'Saving...' : 'Save Changes'}
+                      {isLoading ? "Saving..." : "Save Changes"}
                     </button>
                   </div>
                 </form>
               </div>
             )}
 
-            {activeTab === 'password' && (
+            {activeTab === "password" && (
               <div className={styles.contentCard}>
-                <h2 className={styles.contentTitle}>
-                  Change Password
-                </h2>
+                <h2 className={styles.contentTitle}>Change Password</h2>
 
                 <form onSubmit={handlePasswordUpdate} className={styles.form}>
                   <div className={styles.formGroup}>
@@ -279,7 +279,7 @@ const MyProfile = () => {
                       className={styles.submitButton}
                     >
                       <FiLock className={styles.buttonIcon} />
-                      {isLoading ? 'Updating...' : 'Update Password'}
+                      {isLoading ? "Updating..." : "Update Password"}
                     </button>
                   </div>
                 </form>

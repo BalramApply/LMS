@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import {
   FiBook,
   FiAward,
@@ -9,8 +9,10 @@ import {
   FiTrendingUp,
   FiCheckCircle,
   FiArrowRight,
-} from 'react-icons/fi';
-import styles from './styles/Home.module.css';
+} from "react-icons/fi";
+import styles from "./styles/Home.module.css";
+import heroTop from "../../assests/sl_top.png";
+import heroBottom from "../../assests/sl_bottom.png";
 
 const Home = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -18,46 +20,46 @@ const Home = () => {
   const features = [
     {
       icon: FiBook,
-      title: 'Comprehensive Courses',
+      title: "Comprehensive Courses",
       description:
-        'Access a wide range of courses with structured content, videos, quizzes, and hands-on projects.',
+        "Access a wide range of courses with structured content, videos, quizzes, and hands-on projects.",
     },
     {
       icon: FiAward,
-      title: 'Earn Certificates',
+      title: "Earn Certificates",
       description:
-        'Get verified certificates upon course completion with unique QR codes for easy verification.',
+        "Get verified certificates upon course completion with unique QR codes for easy verification.",
     },
     {
       icon: FiUsers,
-      title: 'Learn at Your Pace',
+      title: "Learn at Your Pace",
       description:
-        'Flexible learning with progress tracking, resume from where you left, and lifetime access.',
+        "Flexible learning with progress tracking, resume from where you left, and lifetime access.",
     },
     {
       icon: FiTrendingUp,
-      title: 'Track Your Progress',
+      title: "Track Your Progress",
       description:
-        'Monitor your learning journey with detailed analytics and completion percentages.',
+        "Monitor your learning journey with detailed analytics and completion percentages.",
     },
   ];
 
   const stats = [
-    { value: '10,000+', label: 'Students' },
-    { value: '100+', label: 'Courses' },
-    { value: '5,000+', label: 'Certificates Issued' },
-    { value: '95%', label: 'Satisfaction Rate' },
+    { value: "10,000+", label: "Students" },
+    { value: "100+", label: "Courses" },
+    { value: "5,000+", label: "Certificates Issued" },
+    { value: "95%", label: "Satisfaction Rate" },
   ];
 
   const benefits = [
-    'Structured multi-level courses',
-    'Interactive quizzes and assessments',
-    'Hands-on projects and tasks',
-    'Video lessons with progress tracking',
-    'Community discussion forums',
-    'Lifetime course access',
-    'Mobile-friendly learning',
-    'Expert instructor support',
+    "Structured multi-level courses",
+    "Interactive quizzes and assessments",
+    "Hands-on projects and tasks",
+    "Video lessons with progress tracking",
+    "Community discussion forums",
+    "Lifetime course access",
+    "Mobile-friendly learning",
+    "Expert instructor support",
   ];
 
   return (
@@ -72,9 +74,7 @@ const Home = () => {
               transition={{ duration: 0.6 }}
               className={styles.heroContent}
             >
-              <h1 className={styles.heroTitle}>
-                Learn. Grow. Succeed.
-              </h1>
+              <h1 className={styles.heroTitle}>Learn. Grow. Succeed.</h1>
               <p className={styles.heroSubtitle}>
                 Master new skills with our comprehensive online courses and earn
                 verified certificates
@@ -82,7 +82,7 @@ const Home = () => {
               <div className={styles.heroButtons}>
                 {isAuthenticated ? (
                   <Link
-                    to={user?.role === 'admin' ? '/admin' : '/dashboard'}
+                    to={user?.role === "admin" ? "/admin" : "/dashboard"}
                     className={styles.heroPrimaryButton}
                   >
                     Go to Dashboard
@@ -90,17 +90,11 @@ const Home = () => {
                   </Link>
                 ) : (
                   <>
-                    <Link
-                      to="/register"
-                      className={styles.heroPrimaryButton}
-                    >
+                    <Link to="/register" className={styles.heroPrimaryButton}>
                       Get Started Free
                       <FiArrowRight className={styles.icon} />
                     </Link>
-                    <Link
-                      to="/courses"
-                      className={styles.heroSecondaryButton}
-                    >
+                    <Link to="/courses" className={styles.heroSecondaryButton}>
                       Explore Courses
                     </Link>
                   </>
@@ -116,7 +110,7 @@ const Home = () => {
             >
               <div className={styles.heroImageGlow}></div>
               <img
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                src={heroTop}
                 alt="Students learning"
                 className={styles.heroImage}
               />
@@ -137,9 +131,7 @@ const Home = () => {
                 transition={{ delay: index * 0.1 }}
                 className={styles.statItem}
               >
-                <p className={styles.statValue}>
-                  {stat.value}
-                </p>
+                <p className={styles.statValue}>{stat.value}</p>
                 <p className={styles.statLabel}>{stat.label}</p>
               </motion.div>
             ))}
@@ -151,9 +143,7 @@ const Home = () => {
       <section className={styles.featuresSection}>
         <div className={styles.featuresContainer}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              Why Choose Our Platform?
-            </h2>
+            <h2 className={styles.sectionTitle}>Why Choose Our Platform?</h2>
             <p className={styles.sectionSubtitle}>
               Everything you need for a successful learning journey
             </p>
@@ -171,10 +161,10 @@ const Home = () => {
                 <div className={styles.featureIcon}>
                   <feature.icon className={styles.featureIconSvg} />
                 </div>
-                <h3 className={styles.featureTitle}>
-                  {feature.title}
-                </h3>
-                <p className={styles.featureDescription}>{feature.description}</p>
+                <h3 className={styles.featureTitle}>{feature.title}</h3>
+                <p className={styles.featureDescription}>
+                  {feature.description}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -224,7 +214,7 @@ const Home = () => {
               className={styles.benefitsImageWrapper}
             >
               <img
-                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                src={heroBottom}
                 alt="Learning benefits"
                 className={styles.benefitsImage}
               />
@@ -243,17 +233,12 @@ const Home = () => {
             viewport={{ once: true }}
             className={styles.ctaContent}
           >
-            <h2 className={styles.ctaTitle}>
-              Ready to Start Learning?
-            </h2>
+            <h2 className={styles.ctaTitle}>Ready to Start Learning?</h2>
             <p className={styles.ctaText}>
               Join thousands of students already learning on our platform
             </p>
             {!isAuthenticated && (
-              <Link
-                to="/register"
-                className={styles.ctaButton}
-              >
+              <Link to="/register" className={styles.ctaButton}>
                 Create Free Account
                 <FiArrowRight className={styles.icon} />
               </Link>
