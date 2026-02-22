@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { FiCheckCircle, FiXCircle, FiMinus, FiTarget, FiClock, FiList } from 'react-icons/fi';
@@ -9,7 +9,6 @@ import styles from './styles/MockTestResult.module.css';
 const MockTestResult = () => {
   const { attemptId } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { currentResult, isLoading } = useSelector((s) => s.mock);
 
   useEffect(() => {

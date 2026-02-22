@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiClock, FiAlertTriangle, FiChevronLeft, FiChevronRight, FiSend } from 'react-icons/fi';
@@ -7,7 +7,6 @@ import { submitTestAttempt } from '../../redux/slices/mockSlice';
 import styles from './styles/TakeTest.module.css';
 
 const TakeTest = () => {
-  const { testId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { activeTest, activeAttempt, isSubmitting } = useSelector((s) => s.mock);
@@ -33,40 +32,47 @@ const TakeTest = () => {
     }
   }, [activeTest, activeAttempt, navigate]);
 
-  // Countdown timer
-  useEffect(() => {
-    if (timeLeft === null) return;
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          if (!hasSubmitted.current) {
-            hasSubmitted.current = true;
-            handleAutoSubmit();
-          }
-          return 0;
-        }
-        if (prev === 301) setShowWarning(true); // 5 min warning
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timerRef.current);
-  }, [timeLeft !== null]);
+  const buildAnswersArray = useCallback(() => {
+  return Object.entries(answers).map(([questionId, selectedOption]) => ({
+    questionId,
+    selectedOption,
+  }));
+}, [answers]);
 
   const handleAutoSubmit = useCallback(() => {
-    const answersArr = buildAnswersArray();
-    dispatch(submitTestAttempt({ attemptId: activeAttempt._id, answers: answersArr })).then(() => {
-      navigate(`/mock-tests/result/${activeAttempt._id}`);
-    });
-  }, [answers, activeAttempt, dispatch, navigate]);
+  const answersArr = buildAnswersArray();
 
-  const buildAnswersArray = () =>
-    Object.entries(answers).map(([questionId, selectedOption]) => ({
-      questionId,
-      selectedOption,
-    }));
+  dispatch(
+    submitTestAttempt({
+      attemptId: activeAttempt._id,
+      answers: answersArr,
+    })
+  ).then(() => {
+    navigate(`/mock-tests/result/${activeAttempt._id}`);
+  });
+}, [buildAnswersArray, activeAttempt, dispatch, navigate]);
+
+// Countdown timer
+  useEffect(() => {
+  if (timeLeft === null) return;
+
+  timerRef.current = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev <= 1) {
+        clearInterval(timerRef.current);
+        if (!hasSubmitted.current) {
+          hasSubmitted.current = true;
+          handleAutoSubmit();
+        }
+        return 0;
+      }
+      if (prev === 301) setShowWarning(true);
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(timerRef.current);
+}, [timeLeft, handleAutoSubmit]);
 
   const handleAnswer = (questionId, option) => {
     setAnswers((prev) => ({ ...prev, [questionId]: option }));
