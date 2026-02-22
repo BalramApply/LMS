@@ -224,7 +224,7 @@ const Login = () => {
         </div>
 
         {/* Demo Credentials */}
-        <div className={styles.demoCard}>
+        {/* <div className={styles.demoCard}>
           <p className={styles.demoTitle}>Demo Credentials:</p>
           <div className={styles.demoCredentials}>
             <p>
@@ -234,7 +234,7 @@ const Login = () => {
               <strong>Student:</strong> student@test.com / Test@123456
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
