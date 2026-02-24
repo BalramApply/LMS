@@ -389,299 +389,420 @@ exports.getMyCertificates = async (req, res) => {
 const path = require('path');
 const { createCanvas, loadImage } = require('canvas');
 
+// ── PROFESSIONAL COLOR PALETTE ─────────────────────────────
+// Deep Navy:       #1a2e4a  (primary brand)
+// Royal Blue:      #1e4d9b  (accents / headings)
+// Gold:            #b8963e  (premium accent)
+// Light Gold:      #d4af6a  (secondary gold)
+// Pale Gold:       #f5e6c8  (subtle fills)
+// Off-White:       #fdfcf8  (background)
+// Light Gray:      #f0eff0  (panel fill)
+// Mid Gray:        #a0a4ab  (secondary text)
+// Dark Text:       #1a2e4a  (body copy)
+
 async function generateCertificatePDF(certificate) {
   const width = 1754;
   const height = 1240;
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
 
-// ── 1. BACKGROUND GRADIENT ───────────────────────────────
-const bgGrad = ctx.createLinearGradient(0, 0, width, height);
-bgGrad.addColorStop(0, '#0a0015');   // deep purple-black
-bgGrad.addColorStop(0.5, '#0d001f');
-bgGrad.addColorStop(1, '#000d1a');   // deep teal-black
-ctx.fillStyle = bgGrad;
-ctx.fillRect(0, 0, width, height);
+  // ── 1. WHITE BACKGROUND ──────────────────────────────────
+  ctx.fillStyle = '#fdfcf8';
+  ctx.fillRect(0, 0, width, height);
 
-// ── SCANLINE OVERLAY (cyberpunk CRT effect) ──────────────
-for (let y = 0; y < height; y += 4) {
-  ctx.fillStyle = 'rgba(0,0,0,0.18)';
-  ctx.fillRect(0, y, width, 2);
-}
-
-// ── NEON GRID BACKGROUND ────────────────────────────────
-ctx.strokeStyle = 'rgba(0,255,255,0.04)';
-ctx.lineWidth = 1;
-for (let x = 0; x < width; x += 60) {
-  ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
-}
-for (let y = 0; y < height; y += 60) {
-  ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
-}
-
-  // ── 6. DECORATIVE CORNER DIAMONDS ───────────────────────
-  const drawDiamond = (cx, cy, size, color) => {
+  // ── 2. SUBTLE WATERMARK PATTERN (diagonal lines) ─────────
+  ctx.save();
+  ctx.globalAlpha = 0.03;
+  ctx.strokeStyle = '#1a2e4a';
+  ctx.lineWidth = 1;
+  for (let d = -height; d < width + height; d += 40) {
     ctx.beginPath();
-    ctx.moveTo(cx, cy - size);
-    ctx.lineTo(cx + size, cy);
-    ctx.lineTo(cx, cy + size);
-    ctx.lineTo(cx - size, cy);
+    ctx.moveTo(d, 0);
+    ctx.lineTo(d + height, height);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // ── 3. OUTER TRIPLE BORDER ───────────────────────────────
+  // Outermost thin gold line
+  ctx.strokeStyle = '#b8963e';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(18, 18, width - 36, height - 36);
+
+  // Middle gap — white
+  // Main thick navy border
+  ctx.strokeStyle = '#1a2e4a';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(26, 26, width - 52, height - 52);
+
+  // Inner fine gold line
+  ctx.strokeStyle = '#b8963e';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(34, 34, width - 68, height - 68);
+
+  // ── 4. CORNER ORNAMENTS ──────────────────────────────────
+  const drawCornerOrnament = (cx, cy, flipX, flipY) => {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(flipX, flipY);
+
+    // Corner L-bracket
+    ctx.strokeStyle = '#b8963e';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, 50); ctx.lineTo(0, 0); ctx.lineTo(50, 0);
+    ctx.stroke();
+
+    // Inner bracket
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#1a2e4a';
+    ctx.beginPath();
+    ctx.moveTo(10, 50); ctx.lineTo(10, 10); ctx.lineTo(50, 10);
+    ctx.stroke();
+
+    // Corner dot
+    ctx.beginPath();
+    ctx.arc(10, 10, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#b8963e';
+    ctx.fill();
+
+    // Small diamond
+    ctx.beginPath();
+    ctx.moveTo(50, 0); ctx.lineTo(55, 5); ctx.lineTo(50, 10); ctx.lineTo(45, 5);
     ctx.closePath();
-    ctx.fillStyle = color;
+    ctx.fillStyle = '#b8963e';
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  drawCornerOrnament(44, 44, 1, 1);
+  drawCornerOrnament(width - 44, 44, -1, 1);
+  drawCornerOrnament(44, height - 44, 1, -1);
+  drawCornerOrnament(width - 44, height - 44, -1, -1);
+
+  // ── 5. TOP HEADER PANEL ──────────────────────────────────
+  // Pale gold header band
+  ctx.fillStyle = '#f7f1e3';
+  ctx.fillRect(44, 44, width - 88, 130);
+
+  // Gold accent line at bottom of header
+  ctx.fillStyle = '#b8963e';
+  ctx.fillRect(44, 174, width - 88, 2);
+  ctx.fillStyle = '#1a2e4a';
+  ctx.fillRect(44, 178, width - 88, 1);
+
+  // ── 6. LOGO (top left) ───────────────────────────────────
+  try {
+    const logoPath = path.join(__dirname, '../assets/logo.jpg');
+    const logo = await loadImage(logoPath);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(112, 109, 52, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(logo, 60, 57, 104, 104);
+    ctx.restore();
+    // Circle border
+    ctx.beginPath();
+    ctx.arc(112, 109, 52, 0, Math.PI * 2);
+    ctx.strokeStyle = '#b8963e';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  } catch (err) {
+    // Fallback monogram
+    ctx.beginPath();
+    ctx.arc(112, 109, 52, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a2e4a';
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 36px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('SL', 112, 120);
+  }
+
+  // Company name
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#1a2e4a';
+  ctx.font = 'bold 22px Georgia, serif';
+  ctx.letterSpacing = '0.1em';
+  ctx.fillText('SUCCESSFUL LEARNING', 178, 100);
+  ctx.fillStyle = '#b8963e';
+  ctx.font = '14px Georgia, serif';
+  ctx.fillText('Excellence in Online Education', 178, 126);
+  ctx.fillStyle = '#a0a4ab';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('www.successfullearning.com', 178, 150);
+
+  // ── 7. QUALITY SEAL (top right) ──────────────────────────
+  const sx = width - 135, sy = 109, sr = 72;
+
+  // Outer gold ring
+  ctx.beginPath();
+  ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+  ctx.strokeStyle = '#b8963e';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Navy fill
+  ctx.beginPath();
+  ctx.arc(sx, sy, sr - 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#1a2e4a';
+  ctx.fill();
+
+  // Scalloped edge
+  ctx.fillStyle = '#b8963e';
+  const petalCount = 24;
+  for (let i = 0; i < petalCount; i++) {
+    const angle = (i / petalCount) * Math.PI * 2;
+    const px = sx + Math.cos(angle) * (sr - 3);
+    const py = sy + Math.sin(angle) * (sr - 3);
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Inner circle
+  ctx.beginPath();
+  ctx.arc(sx, sy, sr - 22, 0, Math.PI * 2);
+  ctx.strokeStyle = '#d4af6a';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Seal text
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('QUALITY', sx, sy - 14);
+  ctx.fillStyle = '#d4af6a';
+  ctx.font = 'bold 14px Georgia, serif';
+  ctx.fillText('✦ ✦ ✦', sx, sy + 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('ASSURED', sx, sy + 18);
+
+  // ── 8. DECORATIVE CENTRE TOP ELEMENT ─────────────────────
+  ctx.textAlign = 'center';
+  // Small ornament row above "Certificate"
+  ctx.fillStyle = '#b8963e';
+  ctx.font = '18px Georgia, serif';
+  ctx.fillText('— ✦ —', width / 2, 230);
+
+  // ── 9. "Certificate" TITLE ───────────────────────────────
+  ctx.fillStyle = '#1a2e4a';
+  ctx.font = 'italic 110px Georgia, serif';
+  ctx.fillText('Certificate', width / 2, 345);
+
+  // ── 10. "OF COMPLETION" SUBTITLE ─────────────────────────
+  // Letter-spaced caps
+  ctx.fillStyle = '#b8963e';
+  ctx.font = 'bold 28px Georgia, serif';
+  ctx.fillText('O F   C O M P L E T I O N', width / 2, 400);
+
+  // Gold rule lines
+  const ruleY = 420;
+  ctx.strokeStyle = '#b8963e';
+  ctx.lineWidth = 1.5;
+  [[250, 580], [width - 250, width - 580]].forEach(([outer, inner]) => {
+    ctx.beginPath(); ctx.moveTo(outer, ruleY); ctx.lineTo(inner, ruleY); ctx.stroke();
+  });
+  // Dot in center
+  ctx.beginPath();
+  ctx.arc(width / 2, ruleY, 4, 0, Math.PI * 2);
+  ctx.fillStyle = '#b8963e';
+  ctx.fill();
+
+  // ── 11. PRESENTED TO LABEL ───────────────────────────────
+  ctx.fillStyle = '#a0a4ab';
+  ctx.font = 'italic 20px Georgia, serif';
+  ctx.fillText('This certificate is proudly presented to', width / 2, 475);
+
+  // ── 12. STUDENT NAME ─────────────────────────────────────
+  ctx.fillStyle = '#1a2e4a';
+  ctx.font = 'italic bold 78px Georgia, serif';
+  ctx.fillText(certificate.studentName, width / 2, 580);
+
+  // Elegant underline
+  const nameWidth = ctx.measureText(certificate.studentName).width;
+  const nameX = width / 2;
+
+  ctx.strokeStyle = '#1a2e4a';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(nameX - nameWidth / 2, 600);
+  ctx.lineTo(nameX + nameWidth / 2, 600);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#b8963e';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(nameX - nameWidth / 2 + 20, 606);
+  ctx.lineTo(nameX + nameWidth / 2 - 20, 606);
+  ctx.stroke();
+
+  // Flanking diamonds
+  const drawSolidDiamond = (cx, cy, size) => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - size); ctx.lineTo(cx + size, cy);
+    ctx.lineTo(cx, cy + size); ctx.lineTo(cx - size, cy);
+    ctx.closePath();
+    ctx.fillStyle = '#b8963e';
     ctx.fill();
   };
-  drawDiamond(width / 2, 95, 10, '#ff00ff');      // magenta
-drawDiamond(width / 2 - 30, 95, 6, '#00ffff');  // cyan
-drawDiamond(width / 2 + 30, 95, 6, '#00ffff');
-drawDiamond(width / 2, height - 95, 10, '#ff00ff');
-drawDiamond(width / 2 - 30, height - 95, 6, '#00ffff');
-drawDiamond(width / 2 + 30, height - 95, 6, '#00ffff');
+  drawSolidDiamond(nameX - nameWidth / 2 - 15, 603, 7);
+  drawSolidDiamond(nameX + nameWidth / 2 + 15, 603, 7);
 
-  // ── 7. DOUBLE NEON BORDER ───────────────────────────────
-// Outer magenta glow border
-ctx.shadowColor = '#ff00ff';
-ctx.shadowBlur = 20;
-ctx.strokeStyle = '#ff00ff';
-ctx.lineWidth = 3;
-ctx.strokeRect(22, 22, width - 44, height - 44);
+  // ── 13. COMPLETION TEXT ──────────────────────────────────
+  ctx.fillStyle = '#5a6270';
+  ctx.font = 'italic 22px Georgia, serif';
+  ctx.fillText('for successfully completing the course in', width / 2, 660);
 
-// Inner cyan border
-ctx.shadowColor = '#00ffff';
-ctx.shadowBlur = 15;
-ctx.strokeStyle = '#00ffff';
-ctx.lineWidth = 1.5;
-ctx.strokeRect(32, 32, width - 64, height - 64);
-ctx.shadowBlur = 0;
-ctx.shadowColor = 'transparent';
+  // ── 14. COURSE NAME ──────────────────────────────────────
+  ctx.fillStyle = '#1e4d9b';
+  ctx.font = 'bold 52px Georgia, serif';
+  ctx.fillText(certificate.courseName.toUpperCase(), width / 2, 740);
 
-// ── 8. LOGO (top left, inside border) ───────────────────
-try {
-  const logoPath = path.join(__dirname, '../assets/logo.jpg');
-  const logo = await loadImage(logoPath);
-  ctx.save();
+  // Thin gold rule under course name
+  ctx.strokeStyle = '#d4af6a';
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.arc(85, 95, 48, 0, Math.PI * 2);  // moved down from y=45 → y=95
-  ctx.closePath();
-  ctx.clip();
-  ctx.drawImage(logo, 37, 47, 96, 96);  // moved down from y=7 → y=47
-  ctx.restore();
-} catch (err) {
-  console.log('Logo load error:', err.message);
-}
+  ctx.moveTo(300, 760); ctx.lineTo(width - 300, 760);
+  ctx.stroke();
 
-// Company name next to logo — cyberpunk colors
-ctx.fillStyle = '#00ffff';          // cyan
-ctx.font = 'bold 26px sans-serif';
-ctx.textAlign = 'left';
-ctx.fillText('SUCCESSFUL', 148, 82);
-ctx.fillStyle = '#ff00ff';          // magenta
-ctx.font = 'bold 26px sans-serif';
-ctx.fillText('LEARNING', 148, 112);
+  // ── 15. DURATION / MODE ROW ──────────────────────────────
+  ctx.fillStyle = '#a0a4ab';
+  ctx.font = '21px Georgia, serif';
+  ctx.fillText(
+    `Duration: ${certificate.courseDuration}   ✦   Mode: Online`,
+    width / 2, 810
+  );
 
-  // ── 9. QUALITY BADGE ────────────────────────────────────
-const bx = width - 150, by = 140, br = 95;
+  // ── 16. MAIN DIVIDER ─────────────────────────────────────
+  // Full-width elegant rule
+  ctx.strokeStyle = '#1a2e4a';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(200, 845); ctx.lineTo(width - 200, 845); ctx.stroke();
+  ctx.strokeStyle = '#b8963e';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(200, 850); ctx.lineTo(width - 200, 850); ctx.stroke();
+  drawSolidDiamond(width / 2, 847, 10);
 
-// Glow
-const glowGrad = ctx.createRadialGradient(bx, by, br - 20, bx, by, br + 20);
-glowGrad.addColorStop(0, 'rgba(255,0,255,0.5)');
-glowGrad.addColorStop(1, 'rgba(255,0,255,0)');
-ctx.beginPath();
-ctx.arc(bx, by, br + 20, 0, Math.PI * 2);
-ctx.fillStyle = glowGrad;
-ctx.fill();
+  // ── 17. FOOTER DISCLAIMER ────────────────────────────────
+  ctx.fillStyle = '#a0a4ab';
+  ctx.font = 'italic 19px Georgia, serif';
+  ctx.fillText(
+    'This is a computer-generated certificate and does not require a signature.',
+    width / 2, 900
+  );
 
-// Dark circle
-ctx.beginPath();
-ctx.arc(bx, by, br, 0, Math.PI * 2);
-ctx.fillStyle = '#0a0015';
-ctx.fill();
-
-// Star burst — cyan
-ctx.fillStyle = '#00ffff';
-for (let i = 0; i < 20; i++) {
-  const angle = (i * Math.PI * 2) / 20;
-  const outerR = br - 5;
-  const innerR = br - 18;
-  ctx.beginPath();
-  ctx.moveTo(bx + Math.cos(angle) * outerR, by + Math.sin(angle) * outerR);
-  ctx.lineTo(bx + Math.cos(angle + 0.16) * innerR, by + Math.sin(angle + 0.16) * innerR);
-  ctx.lineTo(bx + Math.cos(angle + 0.31) * outerR, by + Math.sin(angle + 0.31) * outerR);
-  ctx.fill();
-}
-
-// Inner magenta ring
-ctx.shadowColor = '#ff00ff';
-ctx.shadowBlur = 10;
-ctx.beginPath();
-ctx.arc(bx, by, br - 20, 0, Math.PI * 2);
-ctx.strokeStyle = '#ff00ff';
-ctx.lineWidth = 2;
-ctx.stroke();
-ctx.shadowBlur = 0;
-
-// Badge text
-ctx.fillStyle = '#00ffff';
-ctx.font = 'bold 17px sans-serif';
-ctx.textAlign = 'center';
-ctx.fillText('ASSURANCE', bx, by - 20);
-ctx.font = '13px sans-serif';
-ctx.fillText('★ ON QUALITY ★', bx, by + 2);
-ctx.font = 'bold 17px sans-serif';
-ctx.fillText('EDUCATION', bx, by + 24);
-ctx.shadowBlur = 0;
-
-  // ── 10. "Certificate" TITLE ──────────────────────────────
-ctx.shadowColor = '#ff00ff';
-ctx.shadowBlur = 25;
-ctx.shadowOffsetX = 0;
-ctx.shadowOffsetY = 0;
-ctx.fillStyle = '#ffffff';
-ctx.font = 'italic bold 100px Georgia, serif';
-ctx.textAlign = 'center';
-ctx.fillText('Certificate', width / 2, 165);
-// Double render for stronger glow
-ctx.fillStyle = 'rgba(255,0,255,0.4)';
-ctx.fillText('Certificate', width / 2, 165);
-ctx.shadowColor = 'transparent';
-ctx.shadowBlur = 0;
-
-  // ── 11. "OF COMPLETION" ──────────────────────────────────
-ctx.shadowColor = '#00ffff';
-ctx.shadowBlur = 15;
-ctx.fillStyle = '#00ffff';
-ctx.font = 'bold 40px Georgia, serif';
-ctx.fillText('OF  COMPLETION', width / 2, 230);
-ctx.shadowBlur = 0;
-
-// Flanking lines — magenta
-const lineY = 215;
-ctx.strokeStyle = '#ff00ff';
-ctx.lineWidth = 1.5;
-[[340, 600], [width - 340, width - 600]].forEach(([outer, inner]) => {
-  const dir = outer < inner ? 1 : -1;
-  ctx.beginPath(); ctx.moveTo(outer, lineY); ctx.lineTo(inner, lineY); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(outer, lineY + 18); ctx.lineTo(inner, lineY + 18); ctx.stroke();
-  drawDiamond(outer + dir * 10, lineY + 9, 8, '#ff00ff');
-});
-
-  // ── 12. PRESENTED TO label ───────────────────────────────
-ctx.fillStyle = '#aaaacc';
-ctx.font = '24px Georgia, serif';
-ctx.fillText('THIS CERTIFICATE IS PROUDLY PRESENTED TO:', width / 2, 310);
-
-  // ── 13. STUDENT NAME ────────────────────────────────────
-ctx.shadowColor = '#ff00ff';
-ctx.shadowBlur = 30;
-ctx.fillStyle = '#ffffff';
-ctx.font = 'italic bold 82px Georgia, serif';
-ctx.fillText(certificate.studentName, width / 2, 420);
-ctx.shadowBlur = 0;
-
-// Decorative underline — cyan + magenta double line
-const nw = ctx.measureText(certificate.studentName).width;
-const nx = width / 2;
-ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 10;
-ctx.strokeStyle = '#00ffff';
-ctx.lineWidth = 2.5;
-ctx.beginPath(); ctx.moveTo(nx - nw / 2, 438); ctx.lineTo(nx + nw / 2, 438); ctx.stroke();
-ctx.strokeStyle = '#ff00ff';
-ctx.lineWidth = 1;
-ctx.beginPath(); ctx.moveTo(nx - nw / 2, 443); ctx.lineTo(nx + nw / 2, 443); ctx.stroke();
-ctx.shadowBlur = 0;
-drawDiamond(nx - nw / 2 - 12, 440, 7, '#ff00ff');
-drawDiamond(nx + nw / 2 + 12, 440, 7, '#ff00ff');
-
-  // ── 14. COURSE LABEL & NAME ──────────────────────────────
-ctx.fillStyle = '#8888aa';
-ctx.font = '26px Georgia, serif';
-ctx.fillText('For successfully completing the course in', width / 2, 510);
-
-// Course name — electric yellow-green gradient
-const courseGrad = ctx.createLinearGradient(0, 560, 0, 635);
-courseGrad.addColorStop(0, '#ccff00');   // electric lime
-courseGrad.addColorStop(1, '#00ffcc');   // neon teal
-ctx.shadowColor = '#ccff00';
-ctx.shadowBlur = 20;
-ctx.fillStyle = courseGrad;
-ctx.font = 'bold 58px Georgia, serif';
-ctx.fillText(certificate.courseName.toUpperCase(), width / 2, 620);
-ctx.shadowBlur = 0;
-
-
-  // ── 15. DURATION ─────────────────────────────────────────
-ctx.fillStyle = '#6688aa';
-ctx.font = '25px sans-serif';
-ctx.fillText(`Duration: ${certificate.courseDuration}   •   Mode: Online`, width / 2, 690);
-
-  // ── 16. DIVIDER ──────────────────────────────────────────
-ctx.shadowColor = '#ff00ff'; ctx.shadowBlur = 8;
-ctx.strokeStyle = '#ff00ff';
-ctx.lineWidth = 1.5;
-ctx.beginPath(); ctx.moveTo(300, 725); ctx.lineTo(width - 300, 725); ctx.stroke();
-ctx.strokeStyle = '#00ffff';
-ctx.lineWidth = 0.7;
-ctx.beginPath(); ctx.moveTo(300, 730); ctx.lineTo(width - 300, 730); ctx.stroke();
-ctx.shadowBlur = 0;
-drawDiamond(width / 2, 727, 10, '#ff00ff');
-
-  // ── 17. FOOTER TEXT ──────────────────────────────────────
-ctx.fillStyle = '#7777aa';
-ctx.font = 'italic 23px Georgia, serif';
-ctx.fillText('This is a computer-generated certificate & no signature is required.', width / 2, 785);
-
-ctx.fillStyle = '#556688';
-ctx.font = '21px sans-serif';
-ctx.fillText(`Credential ID: ${certificate.certificateId}`, width / 2, 830);
+  ctx.fillStyle = '#c8cbd0';
+  ctx.font = '18px sans-serif';
+  ctx.fillText(`Credential ID: ${certificate.certificateId}`, width / 2, 935);
 
   // ── 18. BOTTOM BRANDING ──────────────────────────────────
-ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 15;
-ctx.fillStyle = '#00ffff';
-ctx.font = 'bold 24px sans-serif';
-ctx.textAlign = 'center';
-ctx.fillText('SUCCESSFUL LEARNING', width / 2, height - 52);
-ctx.shadowBlur = 0;
-ctx.fillStyle = 'rgba(255,0,255,0.5)';
-ctx.font = '18px sans-serif';
-ctx.fillText('www.successfullearning.com', width / 2, height - 28);
+  ctx.fillStyle = '#1a2e4a';
+  ctx.font = 'bold 20px Georgia, serif';
+  ctx.fillText('S U C C E S S F U L   L E A R N I N G', width / 2, height - 50);
 
-// ── 19. DATE BLOCK ───────────────────────────────────────
-const issueDate = new Date(certificate.issueDate).toLocaleDateString('en-GB', {
-  day: '2-digit', month: '2-digit', year: 'numeric',
-});
+  // Bottom gold rule
+  ctx.strokeStyle = '#b8963e';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(200, height - 60); ctx.lineTo(width - 200, height - 60);
+  ctx.stroke();
 
-ctx.shadowColor = '#00ffff'; ctx.shadowBlur = 10;
-ctx.fillStyle = '#00ffff';
-ctx.font = 'bold 30px Georgia, serif';
-ctx.textAlign = 'right';
-ctx.fillText(issueDate, width - 185, 1050);
-ctx.shadowBlur = 0;
-ctx.strokeStyle = '#ff00ff';
-ctx.lineWidth = 1.5;
-ctx.beginPath(); ctx.moveTo(width - 390, 1063); ctx.lineTo(width - 165, 1063); ctx.stroke();
-ctx.fillStyle = '#7788aa';
-ctx.font = '20px sans-serif';
-ctx.fillText('Course Completed Date', width - 185, 1088);
+  // ── 19. DATE BLOCK (bottom right) ────────────────────────
+  const issueDate = new Date(certificate.issueDate).toLocaleDateString('en-GB', {
+    day: '2-digit', month: 'long', year: 'numeric',
+  });
 
-// ── 20. QR CODE ──────────────────────────────────────────
-if (certificate.qrCode) {
-  try {
-    const qrImage = await loadImage(certificate.qrCode);
-    ctx.fillStyle = '#0a0015';
-    ctx.fillRect(185, 960, 170, 170);
-    ctx.shadowColor = '#ff00ff'; ctx.shadowBlur = 12;
-    ctx.strokeStyle = '#ff00ff';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(185, 960, 170, 170);
-    ctx.shadowBlur = 0;
-    ctx.drawImage(qrImage, 190, 965, 160, 160);
-    ctx.fillStyle = '#00ffff';
-    ctx.font = '20px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Scan to Verify', 270, 1155);
-  } catch (err) {
-    console.log('QR error:', err);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#1a2e4a';
+  ctx.font = 'bold 24px Georgia, serif';
+  ctx.fillText(issueDate, width - 220, 990);
+
+  ctx.strokeStyle = '#b8963e';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(width - 480, 1003);
+  ctx.lineTo(width - 205, 1003);
+  ctx.stroke();
+
+  ctx.fillStyle = '#a0a4ab';
+  ctx.font = 'italic 17px Georgia, serif';
+  ctx.fillText('Date of Completion', width - 220, 1025);
+
+  // ── 20. QR CODE (bottom left) ────────────────────────────
+  if (certificate.qrCode) {
+    try {
+      const qrImage = await loadImage(certificate.qrCode);
+
+      // QR background box
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#b8963e';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(195, 955, 175, 175, 4);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.drawImage(qrImage, 202, 962, 161, 161);
+
+      ctx.fillStyle = '#a0a4ab';
+      ctx.font = 'italic 16px Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Scan to Verify', 282, 1152);
+    } catch (err) {
+      console.log('QR error:', err);
+    }
   }
-}
+
+  // ── 21. SIGNATORY BLOCK (bottom centre-left) ─────────────
+  const sigX = width / 2 - 160;
+  const sigY = 980;
+
+  // Signature "Balram" in cursive style
+  ctx.fillStyle = '#1a2e4a';
+  ctx.font = 'italic bold 52px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Balram', sigX, sigY + 45);
+
+  // Signature underline flourish
+  const sigTextWidth = ctx.measureText('Balram').width;
+  ctx.strokeStyle = '#1a2e4a';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(sigX - sigTextWidth / 2 - 10, sigY + 56);
+  ctx.bezierCurveTo(
+    sigX - sigTextWidth / 4, sigY + 62,
+    sigX + sigTextWidth / 4, sigY + 50,
+    sigX + sigTextWidth / 2 + 18, sigY + 60
+  );
+  ctx.stroke();
+
+  // Horizontal rule below signature
+  ctx.strokeStyle = '#1a2e4a';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(sigX - 140, sigY + 75);
+  ctx.lineTo(sigX + 140, sigY + 75);
+  ctx.stroke();
+
+  ctx.fillStyle = '#a0a4ab';
+  ctx.font = 'italic 17px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Director, Successful Learning', sigX, sigY + 100);
+
+  // ── 22. EMBOSSED CENTRE WATERMARK ────────────────────────
+  ctx.save();
+  ctx.globalAlpha = 0.04;
+  ctx.fillStyle = '#1a2e4a';
+  ctx.font = 'bold 220px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('SL', width / 2, height / 2 + 60);
+  ctx.restore();
 
   return canvas.toBuffer('image/jpeg', { quality: 0.97 });
 }
+
+// module.exports = { generateCertificatePDF };
