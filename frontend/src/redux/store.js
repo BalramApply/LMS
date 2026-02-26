@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import courseReducer from './slices/courseSlice';
 import progressReducer from './slices/progressSlice';
 import mockReducer from './slices/mockSlice';
+import bannerReducer from './slices/bannerSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     courses: courseReducer,
     progress: progressReducer,
     mock: mockReducer,
+    banners: bannerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

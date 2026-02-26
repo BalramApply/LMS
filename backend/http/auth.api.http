@@ -31,8 +31,8 @@ POST {{authUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "admin@lms.com",
-  "password": "Admin@123456"
+  "email": "Cow@gmail.com",
+  "password": "Cow@2002"
 }
 
 ### ===============================

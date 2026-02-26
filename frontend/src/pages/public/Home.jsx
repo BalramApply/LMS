@@ -13,6 +13,7 @@ import {
 import styles from "./styles/Home.module.css";
 import heroTop from "../../assests/sl_top.png";
 import heroBottom from "../../assests/sl_bottom.png";
+import HeroBanner from "./components/HeroBanner";
 
 const Home = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -46,7 +47,7 @@ const Home = () => {
 
   const stats = [
     { value: "10,000+", label: "Students" },
-    { value: "100+", label: "Courses" },
+    { value: "1+", label: "Courses" },
     { value: "5,000+", label: "Certificates Issued" },
     { value: "95%", label: "Satisfaction Rate" },
   ];
@@ -64,60 +65,8 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      {/* Hero Section */}
-      <section className={styles.heroSection}>
-        <div className={styles.heroContainer}>
-          <div className={styles.heroGrid}>
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className={styles.heroContent}
-            >
-              <h1 className={styles.heroTitle}>Learn. Grow. Succeed.</h1>
-              <p className={styles.heroSubtitle}>
-                Master new skills with our comprehensive online courses and earn
-                verified certificates
-              </p>
-              <div className={styles.heroButtons}>
-                {isAuthenticated ? (
-                  <Link
-                    to={user?.role === "admin" ? "/admin" : "/dashboard"}
-                    className={styles.heroPrimaryButton}
-                  >
-                    Go to Dashboard
-                    <FiArrowRight className={styles.icon} />
-                  </Link>
-                ) : (
-                  <>
-                    <Link to="/register" className={styles.heroPrimaryButton}>
-                      Get Started Free
-                      <FiArrowRight className={styles.icon} />
-                    </Link>
-                    <Link to="/courses" className={styles.heroSecondaryButton}>
-                      Explore Courses
-                    </Link>
-                  </>
-                )}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className={styles.heroImageWrapper}
-            >
-              <div className={styles.heroImageGlow}></div>
-              <img
-                src={heroTop}
-                alt="Students learning"
-                className={styles.heroImage}
-              />
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      {/* ── AUTO SLIDING HERO BANNER (replaces static heroSection) ── */}
+      <HeroBanner />
 
       {/* Stats Section */}
       <section className={styles.statsSection}>

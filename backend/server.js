@@ -16,6 +16,7 @@ const analyticsRoutes = require('./routes/analyticsRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const mockTestRoutes = require('./routes/mockTestRoutes');
+const bannerRoutes = require("./routes/bannerRoutes");
 
 // Connect to database
 connectDB();
@@ -50,6 +51,7 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/mock-tests', mockTestRoutes);
+app.use('/api', bannerRoutes);  // ← add this
 
 // Health check route
 app.get('/health', (req, res) => {

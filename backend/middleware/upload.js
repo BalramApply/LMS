@@ -13,14 +13,14 @@ const fileFilter = (req, file, cb) => {
   const extname = path.extname(file.originalname).toLowerCase();
   const mimetype = file.mimetype;
 
-  if (file.fieldname === 'thumbnail' || file.fieldname === 'avatar') {
+  if (file.fieldname === 'thumbnail' || file.fieldname === 'avatar' || file.fieldname === 'image') {
     const isImage = allowedImageTypes.test(extname.slice(1)) && 
                     mimetype.startsWith('image/');
     
     if (isImage) {
       return cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed for thumbnails/avatars!'));
+      cb(new Error('nly image files (jpeg, jpg, png, gif, webp) are allowed!'));
     }
   } else if (file.fieldname === 'video') {
     const isVideo = allowedVideoTypes.test(extname.slice(1)) && 

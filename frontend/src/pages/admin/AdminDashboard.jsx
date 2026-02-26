@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   FiUsers,
   FiBook,
@@ -9,11 +9,12 @@ import {
   FiCheckCircle,
   FiMessageSquare,
   FiUserCheck,
-} from 'react-icons/fi';
-import api from '../../api/client';
-import Loader from '../../components/common/Loader';
-import { formatCurrency } from '../../utils/formatters';
-import styles from './styles/AdminDashboard.module.css';
+  FiImage,
+} from "react-icons/fi";
+import api from "../../api/client";
+import Loader from "../../components/common/Loader";
+import { formatCurrency } from "../../utils/formatters";
+import styles from "./styles/AdminDashboard.module.css";
 
 const AdminDashboard = () => {
   const [students, setStudents] = useState([]);
@@ -30,9 +31,9 @@ const AdminDashboard = () => {
       setLoading(true);
 
       const [studentsRes, coursesRes, commentsRes] = await Promise.all([
-        api.get('/admin/students'),
-        api.get('/courses'),
-        api.get('/admin/comments'),
+        api.get("/admin/students"),
+        api.get("/courses"),
+        api.get("/admin/comments"),
       ]);
 
       if (studentsRes.data.success) {
@@ -47,7 +48,7 @@ const AdminDashboard = () => {
         setComments(commentsRes.data.data || []);
       }
     } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
+      console.error("Failed to fetch dashboard data:", error);
     } finally {
       setLoading(false);
     }
@@ -59,17 +60,17 @@ const AdminDashboard = () => {
 
   // Calculate stats from actual data
   const totalStudents = students.length;
-  const activeStudents = students.filter(s => s.isActive).length;
+  const activeStudents = students.filter((s) => s.isActive).length;
   const totalCourses = courses.length;
-  const publishedCourses = courses.filter(c => c.isPublished).length;
-  
+  const publishedCourses = courses.filter((c) => c.isPublished).length;
+
   // Calculate enrollments
   const totalEnrollments = students.reduce((sum, student) => {
     return sum + (student.enrolledCourses?.length || 0);
   }, 0);
-  
+
   const recentEnrollments = totalEnrollments; // Same as total for now
-  
+
   // Calculate revenue
   const totalRevenue = courses.reduce((sum, course) => {
     return sum + (course.totalRevenue || 0);
@@ -78,47 +79,47 @@ const AdminDashboard = () => {
   const stats = [
     {
       icon: FiUsers,
-      label: 'Total Students',
+      label: "Total Students",
       value: totalStudents,
       iconClass: styles.iconBlue,
-      link: '/admin/students',
+      link: "/admin/students",
     },
     {
       icon: FiUserCheck,
-      label: 'Active Students',
+      label: "Active Students",
       value: activeStudents,
       iconClass: styles.iconGreen,
-      link: '/admin/students',
+      link: "/admin/students",
     },
     {
       icon: FiBook,
-      label: 'Total Courses',
+      label: "Total Courses",
       value: totalCourses,
       iconClass: styles.iconPurple,
-      link: '/admin/courses',
+      link: "/admin/courses",
     },
     {
       icon: FiCheckCircle,
-      label: 'Published Courses',
+      label: "Published Courses",
       value: publishedCourses,
       iconClass: styles.iconEmerald,
-      link: '/admin/courses',
+      link: "/admin/courses",
     },
     {
       icon: FiTrendingUp,
-      label: 'Total Enrollments',
+      label: "Total Enrollments",
       value: totalEnrollments,
       iconClass: styles.iconIndigo,
     },
     {
       icon: FiTrendingUp,
-      label: 'Recent Enrollments',
+      label: "Recent Enrollments",
       value: recentEnrollments,
       iconClass: styles.iconCyan,
     },
     {
       icon: FiDollarSign,
-      label: 'Total Revenue',
+      label: "Total Revenue",
       value: formatCurrency(totalRevenue),
       iconClass: styles.iconYellow,
     },
@@ -126,32 +127,40 @@ const AdminDashboard = () => {
 
   const quickActions = [
     {
-      title: 'Manage Students',
+      title: "Manage Students",
       description: `${totalStudents} total students (${activeStudents} active)`,
       icon: FiUsers,
       iconClass: styles.iconBlue,
-      link: '/admin/students',
+      link: "/admin/students",
     },
     {
-      title: 'Manage Courses',
+      title: "Manage Courses",
       description: `${totalCourses} total courses (${publishedCourses} published)`,
       icon: FiBook,
       iconClass: styles.iconPurple,
-      link: '/admin/courses',
+      link: "/admin/courses",
     },
     {
-      title: 'Comment Moderation',
+      title: "Comment Moderation",
       description: `${comments.length} total comments`,
       icon: FiMessageSquare,
       iconClass: styles.iconOrange,
-      link: '/admin/comments',
+      link: "/admin/comments",
     },
     {
-      title: 'Analytics Dashboard',
-      description: 'View detailed analytics and reports',
+      title: "Analytics Dashboard",
+      description: "View detailed analytics and reports",
       icon: FiTrendingUp,
       iconClass: styles.iconGreen,
-      link: '/admin/analytics',
+      link: "/admin/analytics",
+    },
+    // ↓ ADD THIS
+    {
+      title: "Banner Manager",
+      description: "Manage hero & promotional banners",
+      icon: FiImage,
+      iconClass: styles.iconIndigo,
+      link: "/admin/banners",
     },
   ];
 
@@ -164,9 +173,7 @@ const AdminDashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           className={styles.header}
         >
-          <h1 className={styles.pageTitle}>
-            Admin Dashboard
-          </h1>
+          <h1 className={styles.pageTitle}>Admin Dashboard</h1>
           <p className={styles.pageSubtitle}>
             Welcome back! Here's an overview of your platform.
           </p>
@@ -182,9 +189,9 @@ const AdminDashboard = () => {
               transition={{ delay: index * 0.1 }}
             >
               <Link
-                to={stat.link || '#'}
+                to={stat.link || "#"}
                 className={`${styles.statCard} ${
-                  !stat.link ? styles.statCardDisabled : ''
+                  !stat.link ? styles.statCardDisabled : ""
                 }`}
               >
                 <div className={styles.statContent}>
@@ -217,19 +224,16 @@ const AdminDashboard = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.9 + index * 0.1 }}
               >
-                <Link
-                  to={action.link}
-                  className={styles.actionCard}
-                >
+                <Link to={action.link} className={styles.actionCard}>
                   <div className={styles.actionContent}>
                     <div className={`${styles.actionIcon} ${action.iconClass}`}>
                       <action.icon className={styles.actionIconSvg} />
                     </div>
                     <div className={styles.actionInfo}>
-                      <h3 className={styles.actionTitle}>
-                        {action.title}
-                      </h3>
-                      <p className={styles.actionDescription}>{action.description}</p>
+                      <h3 className={styles.actionTitle}>{action.title}</h3>
+                      <p className={styles.actionDescription}>
+                        {action.description}
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -252,14 +256,14 @@ const AdminDashboard = () => {
             <div className={styles.systemStatusInfo}>
               <p className={styles.systemStatusTitle}>System Operational</p>
               <p className={styles.systemStatusText}>
-                All services are running smoothly. Last updated:{' '}
-                {new Date().toLocaleString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  second: 'numeric',
+                All services are running smoothly. Last updated:{" "}
+                {new Date().toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  second: "numeric",
                   hour12: true,
                 })}
               </p>

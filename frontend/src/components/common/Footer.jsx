@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiGithub, FiTwitter, FiLinkedin, FiMail, FiHeart } from 'react-icons/fi';
+import { FiHeart, FiYoutube } from 'react-icons/fi';
+import { FaTelegramPlane, FaWhatsapp } from "react-icons/fa";
 import styles from './styles/Footer.module.css';
 
 const Footer = () => {
@@ -34,10 +35,9 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { name: 'GitHub', icon: FiGithub, url: 'https://github.com' },
-    { name: 'Twitter', icon: FiTwitter, url: 'https://twitter.com' },
-    { name: 'LinkedIn', icon: FiLinkedin, url: 'https://linkedin.com' },
-    { name: 'Email', icon: FiMail, url: 'mailto:support@lms.com' },
+    { name: 'YouTube', icon: FiYoutube, url: 'https://www.youtube.com/@yourchannelname' },
+    { name: 'Telegram', icon: FaTelegramPlane, url: 'https://t.me/yourusername' },
+    { name: 'WhatsApp', icon: FaWhatsapp, url: 'https://whatsapp.com/channel/yourchannelid' },
   ];
 
   return (
@@ -49,10 +49,10 @@ const Footer = () => {
           <div className={styles.brandSection}>
             <Link to="/" className={styles.brandLink}>
               <div className={styles.logoIcon}>
-                <span className={styles.logoText}>L</span>
+                <span className={styles.logoText}>SL</span>
               </div>
               <span className={styles.brandTitle}>
-                LMS Platform
+                Successful Learning
               </span>
             </Link>
             <p className={styles.brandDescription}>
@@ -173,7 +173,7 @@ const Footer = () => {
         <div className={styles.bottomBar}>
           <div className={styles.bottomContent}>
             <p className={styles.copyright}>
-              © {currentYear} LMS Platform. All rights reserved.
+              © {currentYear} Successful Learning Platform. All rights reserved.
             </p>
             <p className={styles.madeWith}>
               Made with <FiHeart className={styles.heartIcon} /> for education

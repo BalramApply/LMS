@@ -31,6 +31,7 @@ import CourseContent from './pages/admin/CourseContent';
 import ManageStudents from './pages/admin/ManageStudents';
 import AnalyticsDashboard from './pages/admin/AnalyticsDashboard';
 import CommentModeration from './pages/admin/CommentModeration';
+import BannerManager from './pages/admin/BannerManager';
 
 // mock test
 import MockTests       from './pages/student/MockTests';
@@ -204,6 +205,15 @@ function App() {
             element={
               <ProtectedRoute role="admin">
                 <CommentModeration />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/banners"
+            element={
+              <ProtectedRoute role="admin">
+                <BannerManager />
               </ProtectedRoute>
             }
           />

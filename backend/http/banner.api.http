@@ -1,0 +1,113 @@
+### =====================================================
+### Base URL
+### =====================================================
+@baseUrl = http://localhost:5000/api
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWIxNDBhNjU3MTkzOWQ4OTU5OGEzYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MjEyODc4NywiZXhwIjoxNzcyNzMzNTg3fQ.fiIXQ6sHi9n3JFIiJuPuLAAAKAOwtzYWeO5cj6hT3Ww
+
+
+### =====================================================
+### PUBLIC ROUTES
+### =====================================================
+
+### 1️⃣ Get Active Banners (Hero)
+GET {{baseUrl}}/banners/active?type=hero
+Content-Type: application/json
+
+
+### 2️⃣ Track View
+PATCH {{baseUrl}}/banners/69a08bb0fe18c45efe71d283/view
+Content-Type: application/json
+
+
+### 3️⃣ Track Click
+PATCH {{baseUrl}}/banners/69a08bb0fe18c45efe71d283/click
+Content-Type: application/json
+
+
+
+### =====================================================
+### ADMIN ROUTES (Require JWT)
+### =====================================================
+
+### 4️⃣ Get All Banners (Admin Table)
+GET {{baseUrl}}/admin/banners
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+
+
+### 5️⃣ Create Banner (WITH IMAGE)
+POST {{baseUrl}}/admin/banners
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="title"
+
+Learn. Grow. Succeed.
+------WebKitFormBoundary
+Content-Disposition: form-data; name="subtitle"
+
+Master new skills with our comprehensive online courses
+------WebKitFormBoundary
+Content-Disposition: form-data; name="buttonText"
+
+Explore Courses
+------WebKitFormBoundary
+Content-Disposition: form-data; name="buttonUrl"
+
+/courses
+------WebKitFormBoundary
+Content-Disposition: form-data; name="type"
+
+hero
+------WebKitFormBoundary
+Content-Disposition: form-data; name="isActive"
+
+true
+------WebKitFormBoundary
+Content-Disposition: form-data; name="displayOrder"
+
+1
+------WebKitFormBoundary
+Content-Disposition: form-data; name="image"; filename="banner.jpg"
+Content-Type: image/jpeg
+
+< ./banner.jpg
+------WebKitFormBoundary--
+
+
+
+### 6️⃣ Update Banner (OPTIONAL IMAGE)
+PUT {{baseUrl}}/admin/banners/{{bannerId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="title"
+
+Updated Banner Title
+------WebKitFormBoundary
+Content-Disposition: form-data; name="displayOrder"
+
+2
+------WebKitFormBoundary--
+
+
+
+### 7️⃣ Soft Delete Banner
+DELETE {{baseUrl}}/admin/banners/69a08bb0fe18c45efe71d283
+Authorization: Bearer {{adminToken}}
+
+
+
+### 8️⃣ Hard Delete Banner
+DELETE {{baseUrl}}/admin/banners/69a08bb0fe18c45efe71d283/hard
+Authorization: Bearer {{adminToken}}
+
+
+
+### 9️⃣ Toggle Active Status
+PATCH {{baseUrl}}/admin/banners/69a08bb0fe18c45efe71d283/toggle
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
