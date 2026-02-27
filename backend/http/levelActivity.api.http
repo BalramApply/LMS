@@ -1,0 +1,50 @@
+### ============================================
+### VARIABLES
+### ============================================
+
+@baseUrl = http://localhost:5000/api/level-activity
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWJmYmM4YWY5MjFjMTQwODZjNTI3MCIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcyMTc3ODA1LCJleHAiOjE3NzI3ODI2MDV9.kg--0SxB6PVJuiJC9Wi300XwQSt9T6FVBpkOGV-uNu8
+@courseId = 699bfd71e5cbadc8858740b6
+@levelId = 699bfd84e5cbadc8858740c2
+
+
+### ============================================
+### 1️⃣ HEARTBEAT (Student)
+### POST /api/level-activity/heartbeat
+### ============================================
+
+POST {{baseUrl}}/heartbeat
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "courseId": "{{courseId}}",
+  "levelId": "{{levelId}}",
+  "levelIndex": 0
+}
+
+
+### ============================================
+### 2️⃣ GET LIVE COUNTS (Student / Admin)
+### GET /api/level-activity/live-counts/:courseId
+### ============================================
+
+GET {{baseUrl}}/live-counts/{{courseId}}
+Authorization: Bearer {{token}}
+
+
+### ============================================
+### 3️⃣ MARK OFFLINE (Student)
+### DELETE /api/level-activity/offline/:courseId
+### ============================================
+
+DELETE {{baseUrl}}/offline/{{courseId}}
+Authorization: Bearer {{token}}
+
+### ============================================
+### 4️⃣ ADMIN - GET ACTIVE STUDENTS
+### GET /api/level-activity/admin/active-students/:courseId
+### ============================================
+
+GET {{baseUrl}}/admin/active-students/{{courseId}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWIxNDBhNjU3MTkzOWQ4OTU5OGEzYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MjE3MTA1OSwiZXhwIjoxNzcyNzc1ODU5fQ.8MIlXKIX8HOVGCZzsyihYWQdhC3VejzQWx0BCJfTSdY

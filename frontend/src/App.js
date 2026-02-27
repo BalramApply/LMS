@@ -32,6 +32,7 @@ import ManageStudents from './pages/admin/ManageStudents';
 import AnalyticsDashboard from './pages/admin/AnalyticsDashboard';
 import CommentModeration from './pages/admin/CommentModeration';
 import BannerManager from './pages/admin/BannerManager';
+import ActiveStudentsPage from './pages/admin/ActiveStudentsPage';
 
 // mock test
 import MockTests       from './pages/student/MockTests';
@@ -218,7 +219,24 @@ function App() {
             }
           />
 
-       
+          <Route
+            path="/admin/active-students"
+            element={
+              <ProtectedRoute role="admin">
+                <ActiveStudentsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/active-students/:courseId"
+            element={
+              <ProtectedRoute role="admin">
+                <ActiveStudentsPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main> 

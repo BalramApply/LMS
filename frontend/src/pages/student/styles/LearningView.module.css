@@ -598,3 +598,31 @@
 @media (prefers-reduced-motion: reduce) {
   .progressFill { transition: none; }
 }
+
+/* ── Live student count on level header ─────────────────── */
+.levelLiveCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+  font-family: var(--cp-font-m);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: #00ff88;
+  white-space: nowrap;
+}
+
+.levelLiveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00ff88;
+  box-shadow: 0 0 6px #00ff88, 0 0 12px rgba(0,255,136,.5);
+  flex-shrink: 0;
+  animation: levelDotPulse 1.4s step-end infinite;
+}
+
+@keyframes levelDotPulse {
+  0%, 100% { opacity: 1;    box-shadow: 0 0 6px #00ff88, 0 0 14px rgba(0,255,136,.5); }
+  50%       { opacity: 0.12; box-shadow: none; }
+}

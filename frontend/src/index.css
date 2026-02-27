@@ -1,4 +1,20 @@
-*{
-  padding: 0;
+*,
+*::before,
+*::after {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  background-color: #080810; /* match your --cp-bg */
+  overscroll-behavior: none; /* prevents bounce revealing white on iOS/Chrome */
+}
+
+#root {
+  min-height: 100vh;
+  background-color: #080810;
 }

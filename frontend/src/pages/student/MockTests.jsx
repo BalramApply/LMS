@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FiClock, FiTarget, FiList, FiLock, FiPlay } from 'react-icons/fi';
-import { fetchPublishedTests, startTestAttempt } from '../../redux/slices/mockSlice';
-import { displayRazorpayMockTest } from '../../utils/mockTestPayment';
-import { formatCurrency } from '../../utils/formatters';
-import styles from './styles/MockTests.module.css';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiClock, FiTarget, FiList, FiLock, FiPlay } from "react-icons/fi";
+import {
+  fetchPublishedTests,
+  startTestAttempt,
+} from "../../redux/slices/mockSlice";
+import { displayRazorpayMockTest } from "../../utils/mockTestPayment";
+import { formatCurrency } from "../../utils/formatters";
+import styles from "./styles/MockTests.module.css";
 
 const MockTests = () => {
   const dispatch = useDispatch();
@@ -19,7 +22,7 @@ const MockTests = () => {
   }, [dispatch]);
 
   const handleStartTest = async (test) => {
-    if (test.accessType === 'Paid') {
+    if (test.accessType === "Paid") {
       // Launch Razorpay for payment then start
       await displayRazorpayMockTest(test._id, user, () => {
         startTest(test._id);
@@ -40,7 +43,9 @@ const MockTests = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>Mock Tests</h1>
-        <p className={styles.subtitle}>Practice with timed tests to sharpen your skills</p>
+        <p className={styles.subtitle}>
+          Practice with timed tests to sharpen your skills
+        </p>
       </div>
 
       {isLoading ? (
@@ -66,8 +71,12 @@ const MockTests = () => {
             >
               <div className={styles.cardTop}>
                 <div className={styles.badges}>
-                  <span className={`${styles.badge} ${test.accessType === 'Paid' ? styles.badgePaid : styles.badgeFree}`}>
-                    {test.accessType === 'Paid' ? formatCurrency(test.price) : 'Free'}
+                  <span
+                    className={`${styles.badge} ${test.accessType === "Paid" ? styles.badgePaid : styles.badgeFree}`}
+                  >
+                    {test.accessType === "Paid"
+                      ? formatCurrency(test.price)
+                      : "Free"}
                   </span>
                   {test.negativeMarking && (
                     <span className={styles.badgeNeg}>-ve Marking</span>
@@ -91,24 +100,31 @@ const MockTests = () => {
 
               {test.negativeMarking && (
                 <p className={styles.negNote}>
-                  ⚠️ Negative marking: -{test.negativeMarkValue} per wrong answer
+                  ⚠️ Negative marking: -{test.negativeMarkValue} per wrong
+                  answer
                 </p>
               )}
 
               {test.totalAttempts > 0 && (
-                <p className={styles.attemptsNote}>
-                  {test.totalAttempts} students attempted · Avg score: {test.averageScore}
-                </p>
+                <div className={styles.attemptsNote}>
+                  <span className={styles.blink} />
+                  {test.totalAttempts} students attempted · Avg:{" "}
+                  {test.averageScore}
+                </div>
               )}
 
               <button
                 onClick={() => handleStartTest(test)}
                 className={styles.startBtn}
               >
-                {test.accessType === 'Paid' ? (
-                  <><FiLock /> Buy & Start Test</>
+                {test.accessType === "Paid" ? (
+                  <>
+                    <FiLock /> Buy & Start Test
+                  </>
                 ) : (
-                  <><FiPlay /> Start Test</>
+                  <>
+                    <FiPlay /> Start Test
+                  </>
                 )}
               </button>
             </motion.div>

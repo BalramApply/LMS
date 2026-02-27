@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   FiUsers,
   FiBookOpen,
-  FiStar,
   FiPlay,
   FiFileText,
   FiCheckCircle,
   FiLock,
+  FiHelpCircle,
+  FiMessageSquare,
 } from "react-icons/fi";
 import {
   getCourse,
@@ -93,9 +94,6 @@ const CourseDetails = () => {
               </span>
               <span className={styles.statItem}>
                 <FiBookOpen /> {course.levels?.length || 0} Levels
-              </span>
-              <span className={styles.statItem}>
-                <FiStar /> {course.averageRating || 0} Rating
               </span>
             </div>
           </div>
@@ -205,99 +203,54 @@ const CourseDetails = () => {
                   )}
 
                   {/* Quiz */}
-                  {topic.quiz?.length > 0 && (
-                    <div className={styles.quizSection}>
-                      <strong>Quiz:</strong>
-                      <ul className={styles.quizList}>
-                        {topic.quiz.map((q) => (
-                          <li key={q._id}>{q.question}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+{topic.quiz?.length > 0 && (
+  <div className={styles.quizSection}>
+    <FiHelpCircle />
+    <span>{topic.quiz.length} Quiz {topic.quiz.length === 1 ? 'Question' : 'Questions'}</span>
+  </div>
+)}
 
-                  {/* Comments */}
-                  {topic.comments?.length > 0 && (
-                    <div className={styles.commentsSection}>
-                      <strong>Student Comments:</strong>
+{/* Comments */}
+{topic.comments?.length > 0 && (
+  <div className={styles.commentsSection}>
+    <FiMessageSquare />
+    <span>{topic.comments.length} Student {topic.comments.length === 1 ? 'Comment' : 'Comments'}</span>
+  </div>
+)}
 
-                      <ul className={styles.commentsList}>
-                        {topic.comments.map((comment) => (
-                          <li key={comment._id} className={styles.commentItem}>
-                            {/* Student Info */}
-                            <div className={styles.commentHeader}>
-                              <img
-                                src={comment.student?.avatar?.url}
-                                alt="avatar"
-                                className={styles.commentAvatar}
-                              />
-                              <span className={styles.commentAuthor}>
-                                {comment.student?.name}
-                              </span>
-                            </div>
-
-                            {/* Student Comment */}
-                            <p className={styles.commentText}>{comment.comment}</p>
-
-                            {/* Admin Replies */}
-                            {comment.replies?.length > 0 && (
-                              <div className={styles.repliesList}>
-                                {comment.replies.map((reply) => (
-                                  <div key={reply._id} className={styles.replyItem}>
-                                    <span className={styles.replyLabel}>
-                                      Admin:
-                                    </span>{" "}
-                                    {reply.reply}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                            {/* Admin Buttons */}
-                            {user?.role === "admin" && (
-                              <div className={styles.commentActions}>
-                                <button
-                                  className={styles.replyBtn}
-                                  onClick={() => {
-                                    const replyText = prompt("Enter reply");
-                                    if (replyText) {
-                                      dispatch(
-                                        replyToComment({
-                                          courseId: course._id,
-                                          levelId: level._id,
-                                          topicId: topic._id,
-                                          commentId: comment._id,
-                                          reply: replyText,
-                                        }),
-                                      );
-                                    }
-                                  }}
-                                >
-                                  Reply
-                                </button>
-
-                                <button
-                                  className={styles.deleteBtn}
-                                  onClick={() =>
-                                    dispatch(
-                                      deleteComment({
-                                        courseId: course._id,
-                                        levelId: level._id,
-                                        topicId: topic._id,
-                                        commentId: comment._id,
-                                      }),
-                                    )
-                                  }
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+{/* Admin-only: full comments view */}
+{user?.role === 'admin' && topic.comments?.length > 0 && (
+  <div className={styles.commentsSection}>
+    <strong>Student Comments:</strong>
+    <ul className={styles.commentsList}>
+      {topic.comments.map((comment) => (
+        <li key={comment._id} className={styles.commentItem}>
+          <div className={styles.commentHeader}>
+            <img src={comment.student?.avatar?.url} alt="avatar" className={styles.commentAvatar} />
+            <span className={styles.commentAuthor}>{comment.student?.name}</span>
+          </div>
+          <p className={styles.commentText}>{comment.comment}</p>
+          {comment.replies?.length > 0 && (
+            <div className={styles.repliesList}>
+              {comment.replies.map((reply) => (
+                <div key={reply._id} className={styles.replyItem}>
+                  <span className={styles.replyLabel}>Admin:</span> {reply.reply}
+                </div>
+              ))}
+            </div>
+          )}
+          <div className={styles.commentActions}>
+            <button className={styles.replyBtn} onClick={() => {
+              const replyText = prompt("Enter reply");
+              if (replyText) dispatch(replyToComment({ courseId: course._id, levelId: level._id, topicId: topic._id, commentId: comment._id, reply: replyText }));
+            }}>Reply</button>
+            <button className={styles.deleteBtn} onClick={() => dispatch(deleteComment({ courseId: course._id, levelId: level._id, topicId: topic._id, commentId: comment._id }))}>Delete</button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
                 </div>
               ))}
             </div>

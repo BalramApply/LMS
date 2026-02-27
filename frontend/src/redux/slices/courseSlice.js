@@ -188,6 +188,19 @@ export const deleteComment = createAsyncThunk(
   },
 );
 
+// Add this new thunk after getAllCourses
+export const getAllCoursesAdmin = createAsyncThunk(
+  "courses/getAllAdmin",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/admin/courses");
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
 const courseSlice = createSlice({
   name: "courses",
   initialState,
@@ -317,6 +330,19 @@ const courseSlice = createSlice({
         if (topic) {
           topic.comments = topic.comments.filter((c) => c._id !== commentId);
         }
+      })
+      // Add after getAllCourses cases
+      .addCase(getAllCoursesAdmin.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getAllCoursesAdmin.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.courses = action.payload;
+      })
+      .addCase(getAllCoursesAdmin.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload?.message || "Failed to fetch courses";
       });
   },
 });

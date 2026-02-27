@@ -235,7 +235,7 @@ exports.getMyEnrolledCourses = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate({
       path: 'enrolledCourses.course',
-      select: 'title thumbnail category level courseType price instructorName',
+      select: 'title thumbnail category level courseType price instructorName isPublished',
     });
 
     res.status(200).json({

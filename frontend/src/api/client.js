@@ -29,6 +29,10 @@ let isRedirecting = false;
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // ✅ Ignore canceled/aborted requests (e.g. caused by navigation or component unmount)
+    if (axios.isCancel(error) || error.code === 'ERR_CANCELED') {
+      return Promise.reject(error);
+    }
     const message =
       error.response?.data?.message ||
       error.message ||

@@ -335,3 +335,32 @@
   .grid { grid-template-columns: 1fr; }
   .metaRow { gap: .5rem; }
 }
+
+/* ---------- Attempts note ---------- */
+.attemptsNote {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .72rem;
+  color: var(--cp-muted);
+  margin: 0;
+  letter-spacing: .05em;
+  padding: .3rem;
+  border-top: 1px dashed var(--cp-border);
+}
+
+.blink {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cp-green);
+  box-shadow: var(--cp-glow-green);
+  flex-shrink: 0;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .25; transform: scale(.75); }
+}

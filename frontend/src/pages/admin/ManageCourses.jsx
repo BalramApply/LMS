@@ -12,11 +12,7 @@ import {
   FiXCircle,
   FiBook,
 } from "react-icons/fi";
-import {
-  getAllCourses,
-  deleteCourse,
-  togglePublishStatus,
-} from "../../redux/slices/courseSlice";
+import { getAllCoursesAdmin, deleteCourse, togglePublishStatus } from "../../redux/slices/courseSlice";
 import Loader from "../../components/common/Loader";
 import toast from "react-hot-toast";
 import styles from './styles/ManageCourses.module.css';
@@ -30,7 +26,7 @@ const ManageCourses = () => {
   const [statusFilter, setStatusFilter] = useState("");
 
   useEffect(() => {
-    dispatch(getAllCourses({}));
+    dispatch(getAllCoursesAdmin());
   }, [dispatch]);
 
   // Stats

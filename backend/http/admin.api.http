@@ -1,6 +1,5 @@
 @baseUrl = http://localhost:5000/api
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTJlMmFmZTdlNTM0N2I2OTUyMzc5NyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MTMwNzE0MSwiZXhwIjoxNzcxOTExOTQxfQ.RxQeyM83xQjwCKrJzYG80I4m5PeXM8VtYiNwcgkkOdQ
-
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWIxNDBhNjU3MTkzOWQ4OTU5OGEzYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MjE5NzQ1OCwiZXhwIjoxNzcyODAyMjU4fQ.uAk6sKtknoEmA1Riz5czuR1LB9zUm1-RwUfmer_MDJY
 ### ================================
 ### 🔐 Get All Students (Admin)
 ### ================================

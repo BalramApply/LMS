@@ -6,7 +6,6 @@ import PasswordStrengthIndicator from "../../pages/auth/components/PasswordStren
 import { isPasswordValid } from "../../utils/passwordStrength";
 import { getInitials, getAvatarColor } from "../../utils/formatters";
 import toast from "react-hot-toast";
-import MockTestPerformance from "./components/MockTestPerformance";
 import styles from "./styles/MyProfile.module.css";
 
 const MyProfile = () => {
@@ -162,16 +161,9 @@ const MyProfile = () => {
               >
                 Change Password
               </button>
-
-
-              
             </div>
-            
           </div>
-                <button onClick={() => setActiveTab("mockTests")} className={styles.tabButton}>
-                {activeTab === "mockTests" && <MockTestPerformance />}
-                MT
-              </button>
+
           {/* Main Content */}
           <div className={styles.mainContent}>
             {activeTab === "profile" && (

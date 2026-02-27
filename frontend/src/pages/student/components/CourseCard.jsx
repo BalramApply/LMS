@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiClock, FiUsers, FiStar, FiBookOpen, FiAward } from 'react-icons/fi';
+import { FiClock, FiUsers, FiBookOpen, FiAward } from 'react-icons/fi';
 import {
   formatCurrency,
   calculateDiscount,
@@ -92,12 +92,6 @@ const CourseCard = ({ course, index = 0 }) => {
                 <FiUsers className={styles.icon} />
                 <span>{course.enrolledStudents || 0}</span>
               </div>
-              {course.averageRating > 0 && (
-                <div className={styles.stat}>
-                  <FiStar className={styles.starIcon} />
-                  <span>{course.averageRating.toFixed(1)}</span>
-                </div>
-              )}
             </div>
 
             {/* Price */}

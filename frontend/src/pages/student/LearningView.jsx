@@ -33,6 +33,7 @@ import {
   getQuizResult,
   getTaskSubmission,
 } from "../../utils/progressCalculator";
+import { useHeartbeat } from "../../utils/useHeartbeat";
 import Confetti from "react-confetti";
 import toast from "react-hot-toast";
 import styles from "./styles/LearningView.module.css";
@@ -58,14 +59,17 @@ const LearningView = () => {
   const [activeTab, setActiveTab] = useState("video");
   const [showCelebration, setShowCelebration] = useState(false);
   const [checkingCompletion, setCheckingCompletion] = useState(false);
+  const [liveCounts, setLiveCounts] = useState({});
 
-  // Fetch course and progress on mount
+  // ─── Derived values (safe: course may be null, hook runs regardless) ─────
+  const currentLevel = course?.levels?.[currentLevelIndex];
+
+  // ─── ALL hooks must be called unconditionally before any early return ─────
   useEffect(() => {
     dispatch(getCourse(courseId));
     dispatch(getProgress(courseId));
   }, [dispatch, courseId]);
 
-  // Handle completion animation
   useEffect(() => {
     if (showCompletionAnimation) {
       setShowCelebration(true);
@@ -73,11 +77,16 @@ const LearningView = () => {
     }
   }, [showCompletionAnimation]);
 
-  // Refetch progress when needed
-  const refetchProgress = () => {
-    dispatch(getProgress(courseId));
-  };
+  // Heartbeat: safe to call even when course/level is not yet loaded —
+  // the hook guards internally against null/undefined values.
+  useHeartbeat(
+    courseId,
+    currentLevel?._id,
+    currentLevelIndex,
+    setLiveCounts,
+  );
 
+  // ─── Early returns AFTER every hook ──────────────────────────────────────
   if (courseLoading || progressLoading) {
     return <Loader fullScreen />;
   }
@@ -98,7 +107,6 @@ const LearningView = () => {
     );
   }
 
-  const currentLevel = course.levels?.[currentLevelIndex];
   const currentTopic = currentLevel?.topics?.[currentTopicIndex];
 
   if (!currentLevel || !currentTopic) {
@@ -109,13 +117,17 @@ const LearningView = () => {
     );
   }
 
+  // ─── Progress helpers ─────────────────────────────────────────────────────
   const enrollment = progress;
+
   const videoProgressData = enrollment
     ? getVideoProgress(currentTopic._id, enrollment.videoProgress)
     : { watchedPercentage: 0, lastWatchedTimestamp: 0 };
+
   const quizResult = enrollment
     ? getQuizResult(currentTopic._id, enrollment.quizResults)
     : null;
+
   const miniTask = enrollment
     ? getTaskSubmission(currentTopic._id, "mini", enrollment.taskSubmissions)
     : null;
@@ -127,9 +139,13 @@ const LearningView = () => {
   const topicCompleted = enrollment
     ? isTopicCompleted(currentTopic._id, enrollment.completedTopics)
     : false;
+
   const levelCompleted = enrollment
     ? isLevelCompleted(currentLevel._id, enrollment.completedLevels)
     : false;
+
+  // ─── Handlers ─────────────────────────────────────────────────────────────
+  const refetchProgress = () => dispatch(getProgress(courseId));
 
   const handleTopicChange = (levelIndex, topicIndex) => {
     setCurrentLevelIndex(levelIndex);
@@ -138,57 +154,31 @@ const LearningView = () => {
     setSidebarOpen(false);
   };
 
-  // Check if topic completion conditions are met
   const checkTopicCompletion = async () => {
     if (topicCompleted || checkingCompletion) return;
-
     setCheckingCompletion(true);
-
     try {
-      // Refetch latest progress first
       const latestProgress = await dispatch(getProgress(courseId)).unwrap();
+      const progressData   = latestProgress.data;
 
-      const progressData = latestProgress.data;
+      const latestVideoProgress = getVideoProgress(currentTopic._id, progressData.videoProgress || []);
+      const latestQuizResult    = getQuizResult(currentTopic._id, progressData.quizResults || []);
+      const latestMiniTask      = getTaskSubmission(currentTopic._id, "mini", progressData.taskSubmissions || []);
 
-      const latestVideoProgress = getVideoProgress(
-        currentTopic._id,
-        progressData.videoProgress || [],
-      );
-
-      const latestQuizResult = getQuizResult(
-        currentTopic._id,
-        progressData.quizResults || [],
-      );
-
-      const latestMiniTask = getTaskSubmission(
-        currentTopic._id,
-        "mini",
-        progressData.taskSubmissions || [],
-      );
-
-      // Check if all required components are completed
-      const hasQuiz = currentTopic.quiz && currentTopic.quiz.length > 0;
-      const hasMiniTask = currentTopic.miniTask && currentTopic.miniTask.title;
+      const hasQuiz    = currentTopic.quiz?.length > 0;
+      const hasMiniTask = !!currentTopic.miniTask?.title;
 
       const videoComplete = latestVideoProgress.watchedPercentage >= 90;
-      const quizComplete =
-        !hasQuiz || (latestQuizResult && latestQuizResult.attempted);
-      const taskComplete =
-        !hasMiniTask || (latestMiniTask && latestMiniTask.completed);
+      const quizComplete  = !hasQuiz    || (latestQuizResult && latestQuizResult.attempted);
+      const taskComplete  = !hasMiniTask || (latestMiniTask && latestMiniTask.completed);
 
-      // If all conditions met, mark topic as complete
       if (videoComplete && quizComplete && taskComplete) {
-        const alreadyCompleted = latestProgress.completedTopics.some(
+        const alreadyCompleted = latestProgress.completedTopics?.some(
           (ct) => ct.toString() === currentTopic._id.toString(),
         );
-
         if (!alreadyCompleted) {
-          await dispatch(
-            completeTopic({ courseId, topicId: currentTopic._id }),
-          ).unwrap();
+          await dispatch(completeTopic({ courseId, topicId: currentTopic._id })).unwrap();
           toast.success("🎉 Topic completed!");
-
-          // Refetch progress to update UI
           await dispatch(getProgress(courseId));
         }
       }
@@ -199,29 +189,13 @@ const LearningView = () => {
     }
   };
 
-  const handleVideoComplete = async () => {
-    // Check if topic can be completed after video finishes
-    await checkTopicCompletion();
-  };
+  const handleVideoComplete  = async () => { await checkTopicCompletion(); };
+  const handleQuizComplete   = async () => { await refetchProgress(); await checkTopicCompletion(); };
+  const handleTaskComplete   = async () => { await refetchProgress(); await checkTopicCompletion(); };
 
-  const handleQuizComplete = async () => {
-    // Refetch progress and check completion
-    await refetchProgress();
-    await checkTopicCompletion();
-  };
-
-  const handleTaskComplete = async () => {
-    // Refetch progress and check completion
-    await refetchProgress();
-    await checkTopicCompletion();
-  };
-
-  // Add this handler
   const handleReadingView = async () => {
     try {
-      await dispatch(
-        markReadingComplete({ courseId, topicId: currentTopic._id }),
-      );
+      await dispatch(markReadingComplete({ courseId, topicId: currentTopic._id }));
       await refetchProgress();
       await checkTopicCompletion();
     } catch (error) {
@@ -234,13 +208,7 @@ const LearningView = () => {
       setCurrentTopicIndex(currentTopicIndex + 1);
       setActiveTab("video");
     } else if (currentLevelIndex < course.levels.length - 1) {
-      if (
-        isLevelUnlocked(
-          currentLevelIndex + 1,
-          enrollment?.completedLevels || [],
-          course.levels,
-        )
-      ) {
+      if (isLevelUnlocked(currentLevelIndex + 1, enrollment?.completedLevels || [], course.levels)) {
         setCurrentLevelIndex(currentLevelIndex + 1);
         setCurrentTopicIndex(0);
         setActiveTab("video");
@@ -263,6 +231,8 @@ const LearningView = () => {
       setActiveTab("video");
     }
   };
+
+  
 
   return (
     <div className={styles.container}>
@@ -316,6 +286,7 @@ const LearningView = () => {
                 const completed = enrollment
                   ? isLevelCompleted(level._id, enrollment.completedLevels)
                   : false;
+                const liveCount = liveCounts[level._id?.toString()] ?? 1;
 
                 return (
                   <div key={level._id} className={styles.levelSection}>
@@ -339,6 +310,15 @@ const LearningView = () => {
                       <span className={styles.levelTitle}>
                         Level {levelIndex + 1}
                       </span>
+                      {/* Live student count */}
+{/* Live student count — only on unlocked levels */}
+                      {unlocked && (
+                        <span className={styles.levelLiveCount}>
+                          <span className={styles.levelLiveDot} />
+                          {liveCount}
+                        </span>
+                      )}
+
                     </div>
 
                     {/* Topics */}

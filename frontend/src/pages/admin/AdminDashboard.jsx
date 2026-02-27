@@ -162,6 +162,13 @@ const AdminDashboard = () => {
       iconClass: styles.iconIndigo,
       link: "/admin/banners",
     },
+    {
+      title: "User Activity",
+      description: "see all & user activity live",
+      icon: FiImage,
+      iconClass: styles.iconIndigo,
+      link: "/admin/active-students",
+    },
   ];
 
   return (

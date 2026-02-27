@@ -1,0 +1,561 @@
+/* ═══════════════════════════════════════════════════════
+   LIVE STUDENTS MONITOR — CYBERPUNK
+   Fonts: Orbitron (display), Share Tech Mono (mono/body)
+   ═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&display=swap');
+
+/* ── Variables ────────────────────────────────────────── */
+:root {
+  --cyan:      #00f0ff;
+  --magenta:   #ff00aa;
+  --green:     #00ff88;
+  --yellow:    #ffe600;
+  --red:       #ff3355;
+  --bg:        #060810;
+  --bg-card:   #0b0e1c;
+  --bg-raise:  #0f1424;
+  --border:    rgba(0, 240, 255, 0.14);
+  --border-h:  rgba(0, 240, 255, 0.42);
+  --text:      #d0e4f0;
+  --dim:       #4a6070;
+  --glow-c:    0 0 10px rgba(0,240,255,.4), 0 0 24px rgba(0,240,255,.15);
+  --glow-m:    0 0 10px rgba(255,0,170,.4), 0 0 24px rgba(255,0,170,.15);
+  --glow-g:    0 0 10px rgba(0,255,136,.4), 0 0 24px rgba(0,255,136,.15);
+}
+
+/* ── Container ────────────────────────────────────────── */
+.container {
+  position: relative;
+  background: var(--bg);
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--text);
+  min-height: 400px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--cyan);
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+}
+
+/* Grid texture */
+.gridBg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,240,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,255,.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Corner notch glow */
+.container::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 20px; height: 20px;
+  background: var(--cyan);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, rgba(0,240,255,.05), transparent);
+  position: relative;
+  z-index: 1;
+  flex-wrap: wrap;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.headerIconWrap {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(0,240,255,.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,240,255,.07);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  flex-shrink: 0;
+}
+
+.headerIcon {
+  color: var(--cyan);
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 4px var(--cyan));
+}
+
+.headerTitle {
+  font-family: 'Orbitron', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--cyan);
+  text-shadow: var(--glow-c);
+  margin: 0;
+  line-height: 1;
+}
+
+.headerSub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin: 0.25rem 0 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* ── Live count badge ─────────────────────────────────── */
+.liveCountBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  background: rgba(0,255,136,.07);
+  border: 1px solid rgba(0,255,136,.3);
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+}
+
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green), 0 0 14px rgba(0,255,136,.5);
+  animation: livePulse 1.3s step-end infinite;
+  flex-shrink: 0;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--green), 0 0 14px rgba(0,255,136,.5); }
+  50%       { opacity: 0.15; box-shadow: none; }
+}
+
+.liveCountNum {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--green);
+  text-shadow: 0 0 8px rgba(0,255,136,.6);
+  line-height: 1;
+}
+
+.liveCountLabel {
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: var(--green);
+  opacity: 0.7;
+}
+
+/* ── Icon buttons ─────────────────────────────────────── */
+.iconBtn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%);
+}
+
+.iconBtn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: var(--glow-c);
+}
+
+.iconBtnActive {
+  border-color: rgba(0,255,136,.4);
+  color: var(--green);
+}
+
+.iconBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.spinning {
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Status bar ───────────────────────────────────────── */
+.statusBar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.4rem 1.25rem;
+  background: rgba(0,0,0,.3);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+  flex-wrap: wrap;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+.statusIcon { font-size: 0.72rem; color: var(--cyan); opacity: 0.7; }
+
+.pollDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--dim);
+  flex-shrink: 0;
+}
+
+.pollDotActive {
+  background: var(--green);
+  box-shadow: 0 0 5px var(--green);
+  animation: livePulse 1.4s step-end infinite;
+}
+
+/* ── Loading state ────────────────────────────────────── */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--border);
+  border-top-color: var(--cyan);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  box-shadow: var(--glow-c);
+}
+
+.loadingText {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--dim);
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink { 50% { opacity: 0.2; } }
+
+/* ── Error state ──────────────────────────────────────── */
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.errorIcon { font-size: 2rem; color: var(--red); filter: drop-shadow(0 0 6px var(--red)); }
+
+.errorText {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--red);
+  opacity: 0.85;
+}
+
+.retryBtn {
+  padding: 0.45rem 1.2rem;
+  background: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-family: 'Orbitron', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%);
+}
+
+.retryBtn:hover {
+  background: rgba(255,51,85,.12);
+  box-shadow: 0 0 10px rgba(255,51,85,.3);
+}
+
+/* ── Empty state ──────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 4rem 2rem;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.emptyIcon { font-size: 2.2rem; color: var(--dim); }
+
+.emptyTitle {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  color: var(--dim);
+}
+
+.emptySub {
+  font-size: 0.7rem;
+  color: var(--dim);
+  opacity: 0.6;
+  letter-spacing: 0.06em;
+}
+
+/* ── Content ──────────────────────────────────────────── */
+.content {
+  padding: 1rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Level group ──────────────────────────────────────── */
+.levelGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.levelLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(0,240,255,.04);
+  border-left: 2px solid var(--cyan);
+  border-bottom: 1px solid var(--border);
+}
+
+.levelIcon { color: var(--cyan); font-size: 0.8rem; flex-shrink: 0; }
+
+.levelNum {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--cyan);
+  text-shadow: 0 0 6px rgba(0,240,255,.4);
+  white-space: nowrap;
+}
+
+.levelTitle {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.levelCount {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--green);
+  white-space: nowrap;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid rgba(0,255,136,.25);
+  background: rgba(0,255,136,.06);
+}
+
+/* ── Student grid ─────────────────────────────────────── */
+.studentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.6rem;
+}
+
+/* ── Student card ─────────────────────────────────────── */
+.studentCard {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.7rem 0.85rem;
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  animation: slideIn 0.35s ease both;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.studentCard:hover {
+  border-color: var(--border-h);
+  box-shadow: 0 0 14px rgba(0,240,255,.08);
+}
+
+/* Hot = seen in last 60s */
+.studentCardHot {
+  border-color: rgba(0,255,136,.22);
+}
+
+.studentCardHot:hover {
+  border-color: rgba(0,255,136,.45);
+  box-shadow: 0 0 14px rgba(0,255,136,.1);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Left colour accent strip */
+.cardAccent {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  opacity: 0.7;
+}
+
+/* ── Avatar ───────────────────────────────────────────── */
+.avatar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg);
+  overflow: visible;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarInitials {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Pulse ring around avatar */
+.avatarPulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid;
+  opacity: 0.4;
+  animation: pulsRing 2s ease-out infinite;
+}
+
+@keyframes pulsRing {
+  0%   { transform: scale(1);   opacity: 0.5; }
+  70%  { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* ── Student info ─────────────────────────────────────── */
+.studentInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.studentName {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 0.18rem;
+}
+
+.studentEmail {
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+/* ── Time ─────────────────────────────────────────────── */
+.timeWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.timeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--dim);
+  flex-shrink: 0;
+}
+
+.timeDotHot {
+  background: var(--green);
+  box-shadow: 0 0 5px var(--green);
+  animation: livePulse 1.3s step-end infinite;
+}
+
+.timeText {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.timeTextHot {
+  color: var(--green);
+  text-shadow: 0 0 6px rgba(0,255,136,.4);
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .studentGrid { grid-template-columns: 1fr; }
+  .statusBar   { gap: 0.75rem; }
+  .header      { padding: 0.85rem 1rem; }
+  .content     { padding: 0.75rem 1rem 1.2rem; }
+}
