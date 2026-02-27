@@ -11,12 +11,11 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import styles from "./styles/Home.module.css";
-import heroTop from "../../assests/sl_top.png";
 import heroBottom from "../../assests/sl_bottom.png";
 import HeroBanner from "./components/HeroBanner";
 
 const Home = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated} = useSelector((state) => state.auth);
 
   const features = [
     {

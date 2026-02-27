@@ -54,7 +54,7 @@ const ActiveStudentsPage = () => {
           <FiRadio className={styles.pageHeaderIcon} />
           <div>
             <h1 className={styles.pageTitle}>LIVE_ACTIVITY</h1>
-            <p className={styles.pageSubtitle}>// REAL-TIME STUDENT MONITORING</p>
+            <p className={styles.pageSubtitle}>{"// REAL-TIME STUDENT MONITORING"}</p>
           </div>
         </div>
 
