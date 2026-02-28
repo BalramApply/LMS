@@ -10,6 +10,7 @@ import {
   FiMessageSquare,
   FiUserCheck,
   FiImage,
+  FiEdit,
 } from "react-icons/fi";
 import api from "../../api/client";
 import Loader from "../../components/common/Loader";
@@ -168,6 +169,13 @@ const AdminDashboard = () => {
       icon: FiImage,
       iconClass: styles.iconIndigo,
       link: "/admin/active-students",
+    },
+    {
+      title: "Blog Manager",
+      description: "Create & manage blog posts",
+      icon: FiEdit,
+      iconClass: styles.iconPurple,
+      link: "/admin/blogs",
     },
   ];
 

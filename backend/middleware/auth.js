@@ -65,3 +65,23 @@ exports.authorize = (...roles) => {
     next();
   };
 };
+
+// middleware/auth.js — add this
+exports.optionalProtect = async (req, res, next) => {
+  let token;
+  if (req.headers.authorization?.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies?.token) {
+    token = req.cookies.token;
+  }
+
+  if (!token) return next(); // ← guest, just continue
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id);
+  } catch (_) {
+    // bad token — still let them through as guest
+  }
+  next();
+};

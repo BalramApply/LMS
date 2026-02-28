@@ -44,7 +44,7 @@ const HeroBanner = () => {
   const dispatch  = useDispatch();
   const navigate  = useNavigate();
   const { activeBanners, activeBannersLoading } = useSelector((s) => s.banners);
-  const { isAuthenticated, user } = useSelector((s) => s.auth);
+  const { isAuthenticated} = useSelector((s) => s.auth);
 
   const [current,  setCurrent]  = useState(0);
   const [direction, setDirection] = useState(1);
@@ -201,18 +201,7 @@ const HeroBanner = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.42, duration: 0.5 }}
                 >
-                  {isAuthenticated ? (
-                    <Link
-                      to={user?.role === "admin" ? "/admin" : "/dashboard"}
-                      className={styles.ctaButton}
-                    >
-                      <span className={styles.ctaBtnInner}>
-                        GO TO DASHBOARD
-                        <FiArrowRight className={styles.ctaIcon} />
-                      </span>
-                      <span className={styles.ctaGlow} />
-                    </Link>
-                  ) : (
+                  
                     <button
                       className={styles.ctaButton}
                       onClick={() => handleCtaClick(banner)}
@@ -223,7 +212,7 @@ const HeroBanner = () => {
                       </span>
                       <span className={styles.ctaGlow} />
                     </button>
-                  )}
+                  
 
                   {/* Secondary ghost link for unauthenticated */}
                   {!isAuthenticated && (

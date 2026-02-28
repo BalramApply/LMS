@@ -1,47 +1,54 @@
-import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { getMe } from './redux/slices/authSlice';
+import React, { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getMe } from "./redux/slices/authSlice";
 
 // Layout Components
-import Navbar from './components/common/Navbar';
-import Footer from './components/common/Footer';
-import ProtectedRoute from './components/common/ProtectedRoute';
-import Loader from './components/common/Loader';
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import Loader from "./components/common/Loader";
 
 // Public Pages
-import Home from './pages/public/Home';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import ExploreCourses from './pages/student/ExploreCourses';
-import CourseDetails from './pages/student/CourseDetails';
-import VerifyCertificate from './pages/public/VerifyCertificate';
+import Home from "./pages/public/Home";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ExploreCourses from "./pages/student/ExploreCourses";
+import CourseDetails from "./pages/student/CourseDetails";
+import VerifyCertificate from "./pages/public/VerifyCertificate";
 
 // Student Pages
-import StudentDashboard from './pages/student/StudentDashboard';
-import LearningView from './pages/student/LearningView';
-import MyProfile from './pages/student/MyProfile';
-import MyCertificates from './pages/student/MyCertificates';
+import StudentDashboard from "./pages/student/StudentDashboard";
+import LearningView from "./pages/student/LearningView";
+import MyProfile from "./pages/student/MyProfile";
+import MyCertificates from "./pages/student/MyCertificates";
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ManageCourses from './pages/admin/ManageCourses';
-import CourseForm from './pages/admin/CourseForm';
-import CourseContent from './pages/admin/CourseContent';
-import ManageStudents from './pages/admin/ManageStudents';
-import AnalyticsDashboard from './pages/admin/AnalyticsDashboard';
-import CommentModeration from './pages/admin/CommentModeration';
-import BannerManager from './pages/admin/BannerManager';
-import ActiveStudentsPage from './pages/admin/ActiveStudentsPage';
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ManageCourses from "./pages/admin/ManageCourses";
+import CourseForm from "./pages/admin/CourseForm";
+import CourseContent from "./pages/admin/CourseContent";
+import ManageStudents from "./pages/admin/ManageStudents";
+import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
+import CommentModeration from "./pages/admin/CommentModeration";
+import BannerManager from "./pages/admin/BannerManager";
+import ActiveStudentsPage from "./pages/admin/ActiveStudentsPage";
 
 // mock test
-import MockTests       from './pages/student/MockTests';
-import TakeTest        from './pages/student/TakeTest';
-import MockTestResult  from './pages/student/MockTestResult';
-import ManageMockTests from './pages/admin/ManageMockTests';
+import MockTests from "./pages/student/MockTests";
+import TakeTest from "./pages/student/TakeTest";
+import MockTestResult from "./pages/student/MockTestResult";
+import ManageMockTests from "./pages/admin/ManageMockTests";
+
+// Blog Pages
+import BlogList from "./pages/public/BlogList";
+import BlogDetail from "./pages/public/components/BlogDetail";
+import ManageBlogs from "./pages/admin/ManageBlogs";
+import BlogForm from "./pages/admin/BlogForm";
+import BlogAnalytics from "./pages/admin/BlogAnalytics";
 
 // 404 Page
-import NotFound from './pages/public/NotFound';
+import NotFound from "./pages/public/NotFound";
 
 function App() {
   const dispatch = useDispatch();
@@ -49,12 +56,11 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    
+
     if (token) {
       dispatch(getMe());
     }
   }, [dispatch]);
-
 
   if (isLoading && !user) {
     return <Loader fullScreen />;
@@ -63,17 +69,21 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-       <main className="flex-grow">
+      <main className="flex-grow">
         <Routes>
-        
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/courses" element={<ExploreCourses />} />
           <Route path="/courses/:id" element={<CourseDetails />} />
           <Route path="/verify-certificate" element={<VerifyCertificate />} />
-          <Route path="/verify-certificate/:certificateId" element={<VerifyCertificate />} />
-        
+          <Route
+            path="/verify-certificate/:certificateId"
+            element={<VerifyCertificate />}
+          />
+          <Route path="/blog" element={<BlogList />} />
+          <Route path="/blog/:slug" element={<BlogDetail />} />
+
           <Route
             path="/mock-tests"
             element={
@@ -135,7 +145,6 @@ function App() {
             }
           />
 
-         
           <Route
             path="/admin/mock-tests"
             element={
@@ -237,9 +246,43 @@ function App() {
             }
           />
 
+          {/* Admin Blog Routes */}
+          <Route
+            path="/admin/blogs"
+            element={
+              <ProtectedRoute role="admin">
+                <ManageBlogs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blogs/new"
+            element={
+              <ProtectedRoute role="admin">
+                <BlogForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blogs/edit/:id"
+            element={
+              <ProtectedRoute role="admin">
+                <BlogForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blogs/analytics"
+            element={
+              <ProtectedRoute role="admin">
+                <BlogAnalytics />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </main> 
+      </main>
       <Footer />
     </div>
   );

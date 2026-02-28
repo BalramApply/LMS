@@ -16,7 +16,8 @@ import {
   FiUsers,
   FiBarChart,
   FiShield,
-  FiTarget
+  FiTarget,
+  FiEdit,
 } from 'react-icons/fi';
 import { getInitials, getAvatarColor } from '../../utils/formatters';
 import styles from './styles/Navbar.module.css';
@@ -47,13 +48,15 @@ const Navbar = () => {
       : [
           { name: 'Dashboard', path: '/dashboard', icon: FiGrid },
           { name: 'Explore Courses', path: '/courses', icon: FiBook },
+          { name: 'Mock Tests', path: '/mock-tests', icon: FiTarget },
+          { name: 'Blog', path: '/blog', icon: FiEdit },
           { name: 'My Certificates', path: '/my-certificates', icon: FiAward },
           { name: 'Verify Certificate', path: '/verify-certificate', icon: FiShield },
-          { name: 'Mock Tests', path: '/mock-tests', icon: FiTarget },
         ]
     : [
         { name: 'Home', path: '/', icon: FiHome },
         { name: 'Courses', path: '/courses', icon: FiBook },
+        { name: 'Blog', path: '/blog', icon: FiEdit },
         { name: 'Verify Certificate', path: '/verify-certificate', icon: FiShield },
       ];
 

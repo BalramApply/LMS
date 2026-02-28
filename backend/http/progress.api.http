@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTQ5NzEzMGRiZTFjNDhmM2IxODU1NiIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcxMzQ1OTYyLCJleHAiOjE3NzE5NTA3NjJ9.9KQ5Bngs7OHCtN1UA4PjeC0ae0zd7Xk_lwPaFt2tlfA
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YTJkZTdjODA1YjUxODlmMTdjYmEyNyIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcyMjgxNTMwLCJleHAiOjE3NzI4ODYzMzB9.lVkaYcxdmoqNunvg5vgad8oNxdA1KPRnTIXW8CmboCk
 
 ### level id = 6988cf533c48f662d31578c0
 ### ===============================
@@ -91,7 +91,7 @@ Content-Type: application/json
 ### Get Course Progress
 ### GET /api/progress/:courseId
 ### ===============================
-GET {{baseUrl}}/api/progress/6994961f0dbe1c48f3b184ff
+GET {{baseUrl}}/api/progress/69a2dd40805b5189f17cb86b
 Authorization: Bearer {{token}}
 
 

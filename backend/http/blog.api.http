@@ -1,0 +1,109 @@
+@baseUrl = http://localhost:5000/api/blogs
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YTFhMmMyNzk1ZDYyMjY0MzhjOGYzMyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MjIxNDQ3MywiZXhwIjoxNzcyODE5MjczfQ.kJfAWBpTOnTdUc9yT37CcJCEjeNTAx2FfUkrOxq5caQ
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YTFkOGUyNWJjZDUyYTE5ZjI3OWYzNiIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcyMjE0NDk4LCJleHAiOjE3NzI4MTkyOTh9.S6uYs0ioBszCbztx8T5tTEKcU3SLz8BRnQejWZ0SkWg
+@blogId = 69a1dbcdd70509880e2290fe
+@blogSlug = how-to-learn-mern-stack
+@commentId = 69a1dd61d70509880e22911b
+
+### 1️⃣ Get All Published Blogs
+GET {{baseUrl}}?page=1&limit=9&sort=latest
+Authorization: Bearer {{userToken}}
+
+### 2️⃣ Get Categories
+GET {{baseUrl}}/categories
+
+### 3️⃣ Get Tags
+GET {{baseUrl}}/tags
+
+### 4️⃣ Get Single Blog By Slug 
+GET {{baseUrl}}/{{blogSlug}}
+Authorization: Bearer {{userToken}}
+
+### 5️⃣ Get Blog Comments 
+GET {{baseUrl}}/{{blogId}}/comments
+
+### 6️⃣ SSE – Track Active Viewers 1
+GET {{baseUrl}}/{{blogId}}/viewers
+
+### 7️⃣ Toggle Like 
+POST {{baseUrl}}/{{blogId}}/like
+Authorization: Bearer {{userToken}}
+
+### 8️⃣ Add Comment 
+POST {{baseUrl}}/{{blogId}}/comments
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "content": "that blog is very helpful!"
+}
+
+### 9️⃣ Edit Comment (Own Comment) 
+PUT {{baseUrl}}/comments/{{commentId}}
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "content": "Updated comment text"
+}
+
+### 🔟 Delete Comment (Own Comment) 
+DELETE {{baseUrl}}/comments/{{commentId}}
+Authorization: Bearer {{userToken}}
+
+### 1️⃣1️⃣ Create Blog (Admin Only)
+POST {{baseUrl}}
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="title"
+
+How to Learn MERN Stack
+--boundary
+Content-Disposition: form-data; name="shortDescription"
+
+Complete beginner guide
+--boundary
+Content-Disposition: form-data; name="content"
+
+Full blog content here...
+--boundary
+Content-Disposition: form-data; name="category"
+
+Development
+--boundary
+Content-Disposition: form-data; name="tags"
+
+["mern","react","node"]
+--boundary
+Content-Disposition: form-data; name="status"
+
+published
+--boundary--
+
+### 1️⃣2️⃣ Update Blog (Admin)
+PUT {{baseUrl}}/{{blogId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Updated Blog Title",
+  "status": "published"
+}
+
+### 1️⃣3️⃣ Delete Blog (Admin)
+DELETE {{baseUrl}}/{{blogId}}
+Authorization: Bearer {{adminToken}}
+
+### 1️⃣4️⃣ Admin Get All Blogs
+GET {{baseUrl}}/admin/all?page=1&limit=10
+Authorization: Bearer {{adminToken}}
+
+### 1️⃣5️⃣ Blog Analytics (Admin)
+GET {{baseUrl}}/admin/analytics
+Authorization: Bearer {{adminToken}}
+
+### 1️⃣6️⃣ Admin Get All Comments
+GET {{baseUrl}}/admin/comments
+Authorization: Bearer {{adminToken}}

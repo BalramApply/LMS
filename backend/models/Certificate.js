@@ -60,7 +60,7 @@ certificateSchema.pre('validate', async function () {
   if (!this.certificateId) {
     const year = new Date().getFullYear();
     const randomString = Math.random().toString(36).substring(2, 8).toUpperCase();
-    this.certificateId = `LMS-${year}-${randomString}`;
+    this.certificateId = `SL-${year}-${randomString}`;
   }
 });
 

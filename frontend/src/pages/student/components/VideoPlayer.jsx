@@ -28,43 +28,42 @@ function extractYoutubeId(url) {
   }
 }
 
-// ─── YouTube Player (iframe via YouTube IFrame API) ───────────────────────────
+// ─── YouTube Player ───────────────────────────────────────────────────────────
 const YoutubePlayer = ({ videoUrl, courseId, topicId, onComplete }) => {
   const containerRef = useRef(null);
-  const playerRef = useRef(null);           // YT.Player instance
+  const playerRef = useRef(null);
   const intervalRef = useRef(null);
   const lastUpdateRef = useRef(0);
-  const completedRef = useRef(false);
+  const completedRef = useRef(false);          // ← guard: fires onComplete once
   const [ytReady, setYtReady] = useState(!!window.YT?.Player);
-  const [watched, setWatched] = useState(0); // 0-100 percentage
+  const [watched, setWatched] = useState(0);
 
   const videoId = extractYoutubeId(videoUrl);
 
-  // ── Load YouTube IFrame API once ────────────────────────────────────────────
+  // Reset guard when topic changes
+  useEffect(() => {
+    completedRef.current = false;
+    setWatched(0);
+  }, [topicId]);
+
+  // Load YouTube IFrame API once
   useEffect(() => {
     if (window.YT?.Player) { setYtReady(true); return; }
-
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     document.head.appendChild(tag);
-
     window.onYouTubeIframeAPIReady = () => setYtReady(true);
-    return () => { /* script stays — API is global */ };
   }, []);
 
-  // ── Initialise player once API ready ────────────────────────────────────────
+  // Initialise player once API ready
   useEffect(() => {
     if (!ytReady || !videoId || !containerRef.current) return;
 
     playerRef.current = new window.YT.Player(containerRef.current, {
       videoId,
-      playerVars: {
-        rel: 0,
-        modestbranding: 1,
-        enablejsapi: 1,
-      },
+      playerVars: { rel: 0, modestbranding: 1, enablejsapi: 1 },
       events: {
-        onStateChange: handleStateChange,
+        onStateChange: (event) => handleStateChange(event),
       },
     });
 
@@ -88,10 +87,9 @@ const YoutubePlayer = ({ videoUrl, courseId, topicId, onComplete }) => {
     }
   };
 
-  const handleStateChange = useCallback((event) => {
-    // YT.PlayerState.PLAYING = 1 | ENDED = 0
+  const handleStateChange = useCallback(async (event) => {
     if (event.data === 1) {
-      // Playing — start polling progress
+      // Playing — poll progress every second
       intervalRef.current = setInterval(() => {
         const player = playerRef.current;
         if (!player?.getCurrentTime) return;
@@ -108,7 +106,8 @@ const YoutubePlayer = ({ videoUrl, courseId, topicId, onComplete }) => {
           lastUpdateRef.current = now;
           updateProgressAPI(pct.toFixed(2), current);
 
-          if (pct >= 90 && !completedRef.current) {
+          // ✅ Guard — only call onComplete once
+          if (pct >= 99 && !completedRef.current) {
             completedRef.current = true;
             onComplete?.();
           }
@@ -122,13 +121,15 @@ const YoutubePlayer = ({ videoUrl, courseId, topicId, onComplete }) => {
     if (event.data === 0) {
       const player = playerRef.current;
       const total = player?.getDuration?.() || 0;
-      updateProgressAPI(100, total);
+      await updateProgressAPI(100, total);   // ← awaited so DB has 100% immediately
+      setWatched(100);
+      // ✅ Guard — only call onComplete once
       if (!completedRef.current) {
         completedRef.current = true;
         onComplete?.();
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, topicId]);
 
   if (!videoId) {
@@ -144,17 +145,11 @@ const YoutubePlayer = ({ videoUrl, courseId, topicId, onComplete }) => {
     <div className={styles.container}>
       <div
         className={styles.playerWrapper}
-        style={{ position: 'relative', paddingTop: '56.25%' /* 16:9 */ }}
+        style={{ position: 'relative', paddingTop: '56.25%' }}
       >
-        {/* The IFrame API replaces this div */}
         <div
           ref={containerRef}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-          }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         />
         {!ytReady && (
           <div className={styles.loadingOverlay}>
@@ -178,6 +173,7 @@ const NativeVideoPlayer = ({
 }) => {
   const playerRef = useRef(null);
   const lastUpdateRef = useRef(0);
+  const completedRef = useRef(false);          // ← guard: fires onComplete once
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
@@ -190,6 +186,16 @@ const NativeVideoPlayer = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasStarted, setHasStarted] = useState(false);
+
+  // Reset guard + state when topic changes
+  useEffect(() => {
+    completedRef.current = false;
+    lastUpdateRef.current = 0;
+    setPlayed(0);
+    setHasStarted(false);
+    setLoading(true);
+    setError(null);
+  }, [topicId]);
 
   const updateVideoProgressAPI = async (watchedPercentage, lastWatchedTimestamp) => {
     try {
@@ -227,8 +233,23 @@ const NativeVideoPlayer = ({
         lastUpdateRef.current = now;
         const percentage = (currentPlayed * 100).toFixed(2);
         updateVideoProgressAPI(percentage, el.currentTime);
-        if (percentage >= 90 && onComplete) onComplete();
+
+        // ✅ Guard — only call onComplete once
+        if (parseFloat(percentage) >= 90 && !completedRef.current) {
+          completedRef.current = true;
+          onComplete?.();
+        }
       }
+    }
+  };
+
+  const handleVideoEnd = async () => {
+    if (!playerRef.current) return;
+    await updateVideoProgressAPI(100, playerRef.current.duration);
+    // ✅ Guard — don't fire again if already called at 90%
+    if (!completedRef.current) {
+      completedRef.current = true;
+      onComplete?.();
     }
   };
 
@@ -241,7 +262,7 @@ const NativeVideoPlayer = ({
   const handlePlayPause = () => {
     if (!playerRef.current) return;
     if (playing) { playerRef.current.pause(); }
-    else          { playerRef.current.play();  }
+    else         { playerRef.current.play();  }
     setPlaying(!playing);
   };
 
@@ -280,12 +301,6 @@ const NativeVideoPlayer = ({
     setError('Failed to load video. Please try again later.');
     setLoading(false);
     toast.error('Failed to load video');
-  };
-
-  const handleVideoEnd = async () => {
-    if (!playerRef.current) return;
-    await updateVideoProgressAPI(100, playerRef.current.duration);
-    onComplete?.();
   };
 
   if (error) {

@@ -22,7 +22,7 @@ POST {{authUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "balram@gmail.com",
+  "email": "jay@gmail.com",
   "password": "Balram@123"
 }
 
@@ -31,8 +31,8 @@ POST {{authUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "Cow@gmail.com",
-  "password": "Cow@2002"
+  "email": "patel@gmail.com",
+  "password": "patel@2002"
 }
 
 ### ===============================

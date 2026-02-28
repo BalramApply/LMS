@@ -1,6 +1,7 @@
 @baseUrl = http://localhost:5000
-@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTU3N2VjMzQwZDBkYWNmNGYyM2UzOSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcxNDAzMzE4LCJleHAiOjE3NzIwMDgxMTh9.pX7Lp50Y4kb6dPtaWuwYutNMBwtA62_lfHlB7qwmvI4
-@courseId = 69955c23abdd5fa817e3c53a
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YTJkZTdjODA1YjUxODlmMTdjYmEyNyIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcyMjgxNTMwLCJleHAiOjE3NzI4ODYzMzB9.lVkaYcxdmoqNunvg5vgad8oNxdA1KPRnTIXW8CmboCk
+
+@courseId = 69a2dd40805b5189f17cb86b
 @certificateId = LMS-2026-A2WDXL
 
 ### =====================================================

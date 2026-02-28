@@ -60,7 +60,6 @@ const ManageCourses = () => {
 
     try {
       await dispatch(deleteCourse(id)).unwrap();
-      toast.success("Course deleted successfully");
     } catch (err) {
       toast.error("Delete failed");
     }
