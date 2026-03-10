@@ -1,0 +1,424 @@
+/* RefundPolicy.module.css — Cyberpunk Edition */
+/* Supplements PolicyPage.module.css with the 3-card Summary section */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap');
+
+/* ── Variables (mirror PolicyPage) ── */
+:root {
+  --cyber-bg:      #020408;
+  --cyber-surface: #060d14;
+  --cyber-card:    #0a1628;
+  --cyber-cyan:    #00f5ff;
+  --cyber-pink:    #ff0080;
+  --cyber-purple:  #7b2fff;
+  --cyber-green:   #00ff9d;
+  --cyber-yellow:  #f0e614;
+  --cyber-text:    #c8e6f0;
+  --cyber-muted:   #4a6878;
+  --glow-c:        rgba(0, 245, 255, 0.55);
+  --glow-g:        rgba(0, 255, 157, 0.5);
+  --glow-p:        rgba(255, 0, 128, 0.5);
+  --glow-b:        rgba(0, 149, 255, 0.5);
+  --grid-line:     rgba(0, 245, 255, 0.04);
+}
+
+/* ── Keyframes ── */
+@keyframes pulseGreen {
+  0%, 100% { box-shadow: 0 0 10px var(--glow-g), 0 0 24px var(--glow-g); }
+  50%       { box-shadow: 0 0 22px var(--glow-g), 0 0 50px var(--glow-g); }
+}
+
+@keyframes pulsePink {
+  0%, 100% { box-shadow: 0 0 10px var(--glow-p), 0 0 24px var(--glow-p); }
+  50%       { box-shadow: 0 0 22px var(--glow-p), 0 0 50px var(--glow-p); }
+}
+
+@keyframes pulseBlue {
+  0%, 100% { box-shadow: 0 0 10px var(--glow-b), 0 0 24px var(--glow-b); }
+  50%       { box-shadow: 0 0 22px var(--glow-b), 0 0 50px var(--glow-b); }
+}
+
+@keyframes scanAcross {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ─────────────────────────────────
+   SUMMARY SECTION
+───────────────────────────────── */
+.summarySection {
+  padding: 3.5rem 0;
+  background: var(--cyber-surface);
+  border-top:    1px solid rgba(0, 245, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid background */
+.summarySection::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg,  var(--grid-line) 0, var(--grid-line) 1px, transparent 0, transparent 80px),
+    repeating-linear-gradient(180deg, var(--grid-line) 0, var(--grid-line) 1px, transparent 0, transparent 80px);
+  pointer-events: none;
+}
+
+/* Ambient glow centre */
+.summarySection::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 300px;
+  background: radial-gradient(ellipse, rgba(0, 245, 255, 0.05) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* Section header line */
+.summaryHeader {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.summaryLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 245, 255, 0.06);
+  color: var(--cyber-cyan);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.38rem 0.95rem;
+  border: 1px solid rgba(0, 245, 255, 0.28);
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  margin-bottom: 0.75rem;
+}
+
+.summaryLabel::before { content: '//'; opacity: 0.55; font-size: 0.62rem; }
+
+/* ─────────────────────────────────
+   GRID
+───────────────────────────────── */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─────────────────────────────────
+   CARD BASE
+───────────────────────────────── */
+.summaryCard {
+  background: var(--cyber-card);
+  border: 1px solid rgba(0, 245, 255, 0.1);
+  padding: 2.25rem 1.75rem;
+  position: relative;
+  overflow: hidden;
+  /* chamfered corners */
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.summaryCard:hover {
+  transform: translateY(-5px);
+}
+
+/* Top-right chamfer fill */
+.summaryCard::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 18px; height: 18px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  transition: opacity 0.3s;
+}
+
+/* Bottom-left chamfer fill */
+.summaryCard::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 18px; height: 18px;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+  opacity: 0.4;
+}
+
+/* Horizontal scan line on hover */
+.summaryCard .scanLine {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  pointer-events: none;
+  transform: translateX(-100%);
+}
+
+.summaryCard:hover .scanLine {
+  animation: scanAcross 0.65s ease-out forwards;
+}
+
+/* ── Green card (Eligible) ── */
+.summaryCard.green {
+  border-top: 2px solid var(--cyber-green);
+  border-color: rgba(0, 255, 157, 0.14);
+}
+
+.summaryCard.green::before { background: var(--cyber-green); }
+.summaryCard.green::after  { background: rgba(0, 255, 157, 0.3); }
+
+.summaryCard.green:hover {
+  border-color: rgba(0, 255, 157, 0.45);
+  box-shadow: 0 8px 32px rgba(0, 255, 157, 0.1);
+}
+
+.summaryCard.green .scanLine {
+  background: linear-gradient(90deg, transparent, var(--cyber-green), transparent);
+}
+
+/* ── Red card (Not Eligible) ── */
+.summaryCard.red {
+  border-top: 2px solid var(--cyber-pink);
+  border-color: rgba(255, 0, 128, 0.14);
+}
+
+.summaryCard.red::before { background: var(--cyber-pink); }
+.summaryCard.red::after  { background: rgba(255, 0, 128, 0.3); }
+
+.summaryCard.red:hover {
+  border-color: rgba(255, 0, 128, 0.45);
+  box-shadow: 0 8px 32px rgba(255, 0, 128, 0.1);
+}
+
+.summaryCard.red .scanLine {
+  background: linear-gradient(90deg, transparent, var(--cyber-pink), transparent);
+}
+
+/* ── Blue card (How to Request) ── */
+.summaryCard.blue {
+  border-top: 2px solid #0095ff;
+  border-color: rgba(0, 149, 255, 0.14);
+}
+
+.summaryCard.blue::before { background: #0095ff; }
+.summaryCard.blue::after  { background: rgba(0, 149, 255, 0.3); }
+
+.summaryCard.blue:hover {
+  border-color: rgba(0, 149, 255, 0.45);
+  box-shadow: 0 8px 32px rgba(0, 149, 255, 0.1);
+}
+
+.summaryCard.blue .scanLine {
+  background: linear-gradient(90deg, transparent, #0095ff, transparent);
+}
+
+/* ─────────────────────────────────
+   CARD ICON
+───────────────────────────────── */
+.summaryIcon {
+  width: 50px; height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 1.3rem;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  transition: filter 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+/* Icon colour per card type */
+.green .summaryIcon {
+  background: rgba(0, 255, 157, 0.1);
+  color: var(--cyber-green);
+  border: 1px solid rgba(0, 255, 157, 0.25);
+}
+
+.red .summaryIcon {
+  background: rgba(255, 0, 128, 0.1);
+  color: var(--cyber-pink);
+  border: 1px solid rgba(255, 0, 128, 0.25);
+}
+
+.blue .summaryIcon {
+  background: rgba(0, 149, 255, 0.1);
+  color: #0095ff;
+  border: 1px solid rgba(0, 149, 255, 0.25);
+}
+
+.green:hover .summaryIcon { filter: drop-shadow(0 0 8px var(--cyber-green)); animation: pulseGreen 2s ease-in-out infinite; }
+.red:hover   .summaryIcon { filter: drop-shadow(0 0 8px var(--cyber-pink));  animation: pulsePink  2s ease-in-out infinite; }
+.blue:hover  .summaryIcon { filter: drop-shadow(0 0 8px #0095ff);            animation: pulseBlue  2s ease-in-out infinite; }
+
+/* ─────────────────────────────────
+   CARD TITLE
+───────────────────────────────── */
+.summaryTitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.green .summaryTitle { color: var(--cyber-green); text-shadow: 0 0 8px rgba(0, 255, 157, 0.4); }
+.red   .summaryTitle { color: var(--cyber-pink);  text-shadow: 0 0 8px rgba(255, 0, 128, 0.4); }
+.blue  .summaryTitle { color: #0095ff;             text-shadow: 0 0 8px rgba(0, 149, 255, 0.4); }
+
+/* ── Blinking cursor on title ── */
+.summaryTitle::after {
+  content: '_';
+  animation: blink 1.2s step-end infinite;
+  margin-left: 1px;
+}
+
+/* ─────────────────────────────────
+   CARD LIST
+───────────────────────────────── */
+.summaryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  position: relative;
+  z-index: 1;
+}
+
+.summaryList li {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.85rem;
+  color: #7ba8be;
+  line-height: 1.55;
+  padding-left: 1.4rem;
+  position: relative;
+  font-weight: 300;
+  animation: countUp 0.4s ease both;
+}
+
+/* Diamond bullet per card colour */
+.summaryList li::before {
+  content: '◆';
+  position: absolute;
+  left: 0.1rem;
+  top: 0.25em;
+  font-size: 0.38rem;
+  line-height: 1;
+}
+
+.green .summaryList li::before { color: var(--cyber-green); filter: drop-shadow(0 0 3px var(--cyber-green)); }
+.red   .summaryList li::before { color: var(--cyber-pink);  filter: drop-shadow(0 0 3px var(--cyber-pink));  }
+.blue  .summaryList li::before { color: #0095ff;             filter: drop-shadow(0 0 3px #0095ff);            }
+
+.summaryList li strong {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.green .summaryList li strong { color: var(--cyber-green); }
+.red   .summaryList li strong { color: var(--cyber-pink);  }
+.blue  .summaryList li strong { color: #0095ff;             }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+
+/* ── Large tablets ≤ 1024px ── */
+@media (max-width: 1024px) {
+  .summaryGrid { gap: 1.25rem; }
+  .summaryCard { padding: 2rem 1.5rem; }
+}
+
+/* ── Tablets ≤ 860px ── */
+@media (max-width: 860px) {
+  .summarySection { padding: 3rem 0; }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+    gap: 1.25rem;
+  }
+
+  /* Reduce chamfer on stacked cards */
+  .summaryCard {
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+    padding: 1.75rem 1.5rem;
+  }
+
+  .summaryCard::before { width: 14px; height: 14px; }
+  .summaryCard::after  { width: 14px; height: 14px; }
+}
+
+/* ── Mobile ≤ 640px ── */
+@media (max-width: 640px) {
+  .summarySection { padding: 2.5rem 0; }
+
+  .summaryGrid {
+    max-width: 100%;
+    gap: 1rem;
+  }
+
+  .summaryCard {
+    padding: 1.5rem 1.25rem;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+
+  .summaryCard::before { width: 12px; height: 12px; }
+  .summaryCard::after  { width: 12px; height: 12px; }
+
+  .summaryIcon {
+    width: 44px; height: 44px;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  .summaryTitle { font-size: 0.74rem; }
+
+  .summaryList li { font-size: 0.82rem; }
+  .summaryList li strong { font-size: 0.78rem; }
+
+  /* Disable hover scan animation on touch */
+  .summaryCard:hover { transform: none; }
+  .summaryCard:hover .scanLine { animation: none; }
+}
+
+/* ── Small phones ≤ 420px ── */
+@media (max-width: 420px) {
+  .summaryCard {
+    padding: 1.35rem 1rem;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  }
+
+  .summaryCard::before { width: 10px; height: 10px; }
+  .summaryCard::after  { width: 10px; height: 10px; }
+
+  .summaryIcon { width: 40px; height: 40px; font-size: 1rem; }
+
+  .summaryTitle::after { display: none; } /* remove cursor on tiny screens */
+
+  .summaryList { gap: 0.5rem; }
+  .summaryList li { font-size: 0.8rem; padding-left: 1.2rem; }
+}

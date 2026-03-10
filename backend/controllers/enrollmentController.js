@@ -1,7 +1,8 @@
 const Course = require('../models/Course');
 const User = require('../models/User');
 const Payment = require('../models/Payment');
-const razorpay = require('../config/razorpay');
+// With this — call it inside the handler, not at module scope
+const getRazorpay = require('../config/razorpay');
 const crypto = require('crypto');
 
 // @desc    Enroll in free course
@@ -121,8 +122,9 @@ exports.createOrder = async (req, res) => {
       },
     };
 
-    const order = await razorpay.orders.create(options);
-
+    // const order = await razorpay.orders.create(options);
+    // Inside createOrder:
+    const order = await getRazorpay().orders.create(options);
     // Create payment record
     const payment = await Payment.create({
       student: user._id,
@@ -131,7 +133,7 @@ exports.createOrder = async (req, res) => {
       amount: amount,
       status: 'pending',
     });
-
+    console.log('KEY:', process.env.RAZORPAY_KEY_ID); // should NOT be undefined
     res.status(200).json({
       success: true,
       data: {
@@ -145,11 +147,13 @@ exports.createOrder = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+  // Razorpay errors nest the message under error.error.description
+  const message = error?.error?.description || error?.message || 'Something went wrong';
+  res.status(500).json({
+    success: false,
+    message,
+  });
+}
 };
 
 // @desc    Verify Razorpay payment and enroll student

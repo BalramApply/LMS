@@ -20,6 +20,7 @@ const {
   submitAttempt,
   getAttemptResult,
   getMyAttempts,
+  getMyPurchases,
 } = require('../controllers/mockTestController');
 const { protect, authorize } = require('../middleware/auth');
 const upload = require('../middleware/upload');
@@ -53,6 +54,8 @@ router.post('/attempts/:attemptId/submit', protect, authorize('student'), submit
 router.post('/:id/create-order', protect, authorize('student'), createTestOrder);
 
 router.post('/:id/start', protect, authorize('student'), startAttempt);
+
+router.get('/my-purchases', protect, getMyPurchases);
 
 // 🚨 KEEP THIS LAST
 router.get('/:id', protect, authorize('student'), getMockTestById);

@@ -11,33 +11,34 @@ const Footer = () => {
     product: [
       { name: 'Features', path: '/#features' },
       { name: 'Courses', path: '/courses' },
-      { name: 'Pricing', path: '/#pricing' },
-      { name: 'Roadmap', path: '/#roadmap' },
+      { name: 'Mock Tests', path: '/mock-tests' },
+      // { name: 'Pricing', path: '/#pricing' },
+      // { name: 'Roadmap', path: '/#roadmap' },
     ],
     company: [
       { name: 'About Us', path: '/about' },
-      { name: 'Careers', path: '/careers' },
+      // { name: 'Careers', path: '/careers' },
       { name: 'Blog', path: '/blog' },
       { name: 'Contact', path: '/contact' },
     ],
-    resources: [
-      { name: 'Documentation', path: '/docs' },
-      { name: 'Help Center', path: '/help' },
-      { name: 'Community', path: '/community' },
-      { name: 'API', path: '/api' },
-    ],
+    // resources: [
+    //   { name: 'Documentation', path: '/docs' },
+    //   { name: 'Help Center', path: '/help' },
+    //   { name: 'Community', path: '/community' },
+    //   { name: 'API', path: '/api' },
+    // ],
     legal: [
       { name: 'Privacy Policy', path: '/privacy' },
       { name: 'Terms of Service', path: '/terms' },
-      { name: 'Cookie Policy', path: '/cookies' },
+      // { name: 'Cookie Policy', path: '/cookies' },
       { name: 'Refund Policy', path: '/refunds' },
     ],
   };
 
   const socialLinks = [
-    { name: 'YouTube', icon: FiYoutube, url: 'https://www.youtube.com/@yourchannelname' },
+    { name: 'YouTube', icon: FiYoutube, url: 'https://www.youtube.com/@SuccessFullearningOfficial' },
     { name: 'Telegram', icon: FaTelegramPlane, url: 'https://t.me/yourusername' },
-    { name: 'WhatsApp', icon: FaWhatsapp, url: 'https://whatsapp.com/channel/yourchannelid' },
+    { name: 'WhatsApp', icon: FaWhatsapp, url: 'https://chat.whatsapp.com/Ho6FX1ERGLi2DKc0tqOSAX' },
   ];
 
   return (
@@ -110,7 +111,7 @@ const Footer = () => {
           </div>
 
           {/* Resources Links */}
-          <div className={styles.linksSection}>
+          {/* <div className={styles.linksSection}>
             <h3 className={styles.linksTitle}>Resources</h3>
             <ul className={styles.linksList}>
               {footerLinks.resources.map((link) => (
@@ -124,7 +125,7 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* Legal Links */}
           <div className={styles.linksSection}>

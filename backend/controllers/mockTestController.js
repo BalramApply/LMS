@@ -3,7 +3,8 @@ const MockTestAttempt = require('../models/MockTestAttempt');
 const MockTestPayment = require('../models/MockTestPayment');
 const User = require('../models/User');
 const cloudinary = require('../config/cloudinary');
-const razorpay = require('../config/razorpay');
+// ✅ Fix — call as function inside the handler
+const getRazorpay = require('../config/razorpay');
 const crypto = require('crypto');
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -306,7 +307,8 @@ exports.createTestOrder = async (req, res) => {
       },
     };
 
-    const order = await razorpay.orders.create(options);
+    // const order = await razorpay.orders.create(options);
+    const order = await getRazorpay().orders.create(options);
     await MockTestPayment.create({
       student: user._id,
       mockTest: test._id,
@@ -328,7 +330,9 @@ exports.createTestOrder = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+  console.error('createTestOrder error:', error); // ← add this
+  const message = error?.error?.description || error?.message || 'Something went wrong';
+  res.status(500).json({ success: false, message });
   }
 };
 
@@ -650,5 +654,23 @@ exports.getMyAttempts = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+// @desc    Get user's purchased test IDs
+// @route   GET /api/mock-tests/my-purchases
+// @access  Private/Student
+exports.getMyPurchases = async (req, res) => {
+  try {
+    const payments = await MockTestPayment.find({
+      student: req.user.id,
+      status: 'completed',
+    }).select('mockTest');
+
+    const purchasedIds = payments.map((p) => p.mockTest.toString());
+
+    res.status(200).json({ success: true, data: purchasedIds });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

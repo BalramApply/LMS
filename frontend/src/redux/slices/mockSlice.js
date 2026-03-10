@@ -1,130 +1,152 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/client";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ADMIN THUNKS
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const fetchAllMockTestsAdmin = createAsyncThunk(
-  'mock/fetchAllAdmin',
+  "mock/fetchAllAdmin",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await api.get('/mock-tests/admin');
+      const { data } = await api.get("/mock-tests/admin");
       return data.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch tests');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch tests",
+      );
     }
-  }
+  },
 );
 
 export const createMockTest = createAsyncThunk(
-  'mock/createTest',
+  "mock/createTest",
   async (testData, { rejectWithValue }) => {
     try {
-      const { data } = await api.post('/mock-tests', testData);
-      toast.success('Mock test created successfully!');
+      const { data } = await api.post("/mock-tests", testData);
+      toast.success("Mock test created successfully!");
       return data.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to create test');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to create test",
+      );
     }
-  }
+  },
 );
 
 export const updateMockTest = createAsyncThunk(
-  'mock/updateTest',
+  "mock/updateTest",
   async ({ id, testData }, { rejectWithValue }) => {
     try {
       const { data } = await api.put(`/mock-tests/${id}`, testData);
-      toast.success('Test updated successfully!');
+      toast.success("Test updated successfully!");
       return data.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to update test');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to update test",
+      );
     }
-  }
+  },
 );
 
 export const deleteMockTest = createAsyncThunk(
-  'mock/deleteTest',
+  "mock/deleteTest",
   async (id, { rejectWithValue }) => {
     try {
       await api.delete(`/mock-tests/${id}`);
-      toast.success('Test deleted successfully!');
+      toast.success("Test deleted successfully!");
       return id;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to delete test');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to delete test",
+      );
     }
-  }
+  },
 );
 
 export const togglePublishTest = createAsyncThunk(
-  'mock/togglePublish',
+  "mock/togglePublish",
   async (id, { rejectWithValue }) => {
     try {
       const { data } = await api.patch(`/mock-tests/${id}/publish`);
       toast.success(data.message);
       return data.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to toggle publish');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to toggle publish",
+      );
     }
-  }
+  },
 );
 
 export const addQuestion = createAsyncThunk(
-  'mock/addQuestion',
+  "mock/addQuestion",
   async ({ testId, formData }, { rejectWithValue }) => {
     try {
-      const { data } = await api.post(`/mock-tests/${testId}/questions`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      toast.success('Question added!');
+      const { data } = await api.post(
+        `/mock-tests/${testId}/questions`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
+      toast.success("Question added!");
       return { testId, question: data.data };
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to add question');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to add question",
+      );
     }
-  }
+  },
 );
 
 export const updateQuestion = createAsyncThunk(
-  'mock/updateQuestion',
+  "mock/updateQuestion",
   async ({ testId, questionId, formData }, { rejectWithValue }) => {
     try {
       const { data } = await api.put(
         `/mock-tests/${testId}/questions/${questionId}`,
         formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
-      toast.success('Question updated!');
+      toast.success("Question updated!");
       return { testId, question: data.data };
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to update question');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to update question",
+      );
     }
-  }
+  },
 );
 
 export const deleteQuestion = createAsyncThunk(
-  'mock/deleteQuestion',
+  "mock/deleteQuestion",
   async ({ testId, questionId }, { rejectWithValue }) => {
     try {
       await api.delete(`/mock-tests/${testId}/questions/${questionId}`);
-      toast.success('Question deleted!');
+      toast.success("Question deleted!");
       return { testId, questionId };
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to delete question');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to delete question",
+      );
     }
-  }
+  },
 );
 
 export const fetchTestAttempts = createAsyncThunk(
-  'mock/fetchAttempts',
+  "mock/fetchAttempts",
   async (testId, { rejectWithValue }) => {
     try {
       const { data } = await api.get(`/mock-tests/${testId}/attempts`);
       return { testId, attempts: data.data, stats: data.stats };
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch attempts');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch attempts",
+      );
     }
-  }
+  },
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -132,88 +154,122 @@ export const fetchTestAttempts = createAsyncThunk(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const fetchPublishedTests = createAsyncThunk(
-  'mock/fetchPublished',
+  "mock/fetchPublished",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await api.get('/mock-tests');
+      const { data } = await api.get("/mock-tests");
       return data.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch tests');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch tests",
+      );
     }
-  }
+  },
 );
 
 export const startTestAttempt = createAsyncThunk(
-  'mock/startAttempt',
+  "mock/startAttempt",
   async (testId, { rejectWithValue }) => {
     try {
       const { data } = await api.post(`/mock-tests/${testId}/start`);
       return data.data; // { attempt, test }
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to start test');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to start test",
+      );
     }
-  }
+  },
 );
 
 export const submitTestAttempt = createAsyncThunk(
-  'mock/submitAttempt',
+  "mock/submitAttempt",
   async ({ attemptId, answers }, { rejectWithValue }) => {
     try {
-      const { data } = await api.post(`/mock-tests/attempts/${attemptId}/submit`, { answers });
+      const { data } = await api.post(
+        `/mock-tests/attempts/${attemptId}/submit`,
+        { answers },
+      );
       return data.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to submit test');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to submit test",
+      );
     }
-  }
+  },
 );
 
 export const fetchAttemptResult = createAsyncThunk(
-  'mock/fetchResult',
+  "mock/fetchResult",
   async (attemptId, { rejectWithValue }) => {
     try {
-      const { data } = await api.get(`/mock-tests/attempts/${attemptId}/result`);
+      const { data } = await api.get(
+        `/mock-tests/attempts/${attemptId}/result`,
+      );
       return data.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch result');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch result",
+      );
     }
-  }
+  },
 );
 
 export const fetchMyAttempts = createAsyncThunk(
-  'mock/fetchMyAttempts',
+  "mock/fetchMyAttempts",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await api.get('/mock-tests/my-attempts');
+      const { data } = await api.get("/mock-tests/my-attempts");
       return { attempts: data.data, stats: data.stats };
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch your attempts');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch your attempts",
+      );
     }
-  }
+  },
 );
 
 export const createTestOrder = createAsyncThunk(
-  'mock/createOrder',
+  "mock/createOrder",
   async (testId, { rejectWithValue }) => {
     try {
       const { data } = await api.post(`/mock-tests/${testId}/create-order`);
       return data.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to create order');
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to create order",
+      );
     }
-  }
+  },
 );
 
 export const verifyTestPayment = createAsyncThunk(
-  'mock/verifyPayment',
+  "mock/verifyPayment",
   async (paymentData, { rejectWithValue }) => {
     try {
-      const { data } = await api.post('/mock-tests/verify-payment', paymentData);
-      toast.success('Payment successful! You can now take the test.');
+      const { data } = await api.post(
+        "/mock-tests/verify-payment",
+        paymentData,
+      );
+      toast.success("Payment successful! You can now take the test.");
       return data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Payment verification failed');
+      return rejectWithValue(
+        err.response?.data?.message || "Payment verification failed",
+      );
     }
-  }
+  },
+);
+
+export const fetchMyPurchases = createAsyncThunk(
+  "mock/fetchMyPurchases",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/mock-tests/my-purchases");
+      return data.data; // array of mockTest IDs
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message);
+    }
+  },
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -232,9 +288,9 @@ const initialState = {
   myStats: null,
 
   // Active test session
-  activeTest: null,       // test questions (no answers)
-  activeAttempt: null,    // current attempt doc
-  currentResult: null,    // result after submission
+  activeTest: null, // test questions (no answers)
+  activeAttempt: null, // current attempt doc
+  currentResult: null, // result after submission
 
   isLoading: false,
   isSubmitting: false,
@@ -242,7 +298,7 @@ const initialState = {
 };
 
 const mockSlice = createSlice({
-  name: 'mock',
+  name: "mock",
   initialState,
   reducers: {
     clearActiveTest: (state) => {
@@ -257,7 +313,10 @@ const mockSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    const loading = (state) => { state.isLoading = true; state.error = null; };
+    const loading = (state) => {
+      state.isLoading = true;
+      state.error = null;
+    };
     const failed = (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
@@ -283,7 +342,9 @@ const mockSlice = createSlice({
       .addCase(updateMockTest.pending, loading)
       .addCase(updateMockTest.fulfilled, (state, action) => {
         state.isLoading = false;
-        const idx = state.adminTests.findIndex((t) => t._id === action.payload._id);
+        const idx = state.adminTests.findIndex(
+          (t) => t._id === action.payload._id,
+        );
         if (idx !== -1) state.adminTests[idx] = action.payload;
       })
       .addCase(updateMockTest.rejected, failed)
@@ -291,35 +352,45 @@ const mockSlice = createSlice({
       .addCase(deleteMockTest.pending, loading)
       .addCase(deleteMockTest.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.adminTests = state.adminTests.filter((t) => t._id !== action.payload);
+        state.adminTests = state.adminTests.filter(
+          (t) => t._id !== action.payload,
+        );
       })
       .addCase(deleteMockTest.rejected, failed)
 
       .addCase(togglePublishTest.fulfilled, (state, action) => {
-        const idx = state.adminTests.findIndex((t) => t._id === action.payload._id);
+        const idx = state.adminTests.findIndex(
+          (t) => t._id === action.payload._id,
+        );
         if (idx !== -1) state.adminTests[idx] = action.payload;
       })
 
       .addCase(addQuestion.fulfilled, (state, action) => {
-        const test = state.adminTests.find((t) => t._id === action.payload.testId);
+        const test = state.adminTests.find(
+          (t) => t._id === action.payload.testId,
+        );
         if (test) test.questions.push(action.payload.question);
       })
 
       .addCase(updateQuestion.fulfilled, (state, action) => {
-        const test = state.adminTests.find((t) => t._id === action.payload.testId);
+        const test = state.adminTests.find(
+          (t) => t._id === action.payload.testId,
+        );
         if (test) {
           const idx = test.questions.findIndex(
-            (q) => q._id === action.payload.question._id
+            (q) => q._id === action.payload.question._id,
           );
           if (idx !== -1) test.questions[idx] = action.payload.question;
         }
       })
 
       .addCase(deleteQuestion.fulfilled, (state, action) => {
-        const test = state.adminTests.find((t) => t._id === action.payload.testId);
+        const test = state.adminTests.find(
+          (t) => t._id === action.payload.testId,
+        );
         if (test) {
           test.questions = test.questions.filter(
-            (q) => q._id !== action.payload.questionId
+            (q) => q._id !== action.payload.questionId,
           );
         }
       })
@@ -348,7 +419,9 @@ const mockSlice = createSlice({
       })
       .addCase(startTestAttempt.rejected, failed)
 
-      .addCase(submitTestAttempt.pending, (state) => { state.isSubmitting = true; })
+      .addCase(submitTestAttempt.pending, (state) => {
+        state.isSubmitting = true;
+      })
       .addCase(submitTestAttempt.fulfilled, (state, action) => {
         state.isSubmitting = false;
         state.currentResult = action.payload;
@@ -374,7 +447,10 @@ const mockSlice = createSlice({
         state.myAttempts = action.payload.attempts;
         state.myStats = action.payload.stats;
       })
-      .addCase(fetchMyAttempts.rejected, failed);
+      .addCase(fetchMyAttempts.rejected, failed)
+      .addCase(fetchMyPurchases.fulfilled, (state, action) => {
+        state.purchasedTestIds = action.payload;
+      });
   },
 });
 

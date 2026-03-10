@@ -8,6 +8,11 @@ import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Loader from "./components/common/Loader";
+import About from "./components/common/About";
+import Contact from "./components/common/Contact";
+import PrivacyPolicy from "./components/common/PrivacyPolicy";
+import TermsConditions from "./components/common/TermsConditions";
+import RefundPolicy from "./components/common/RefundPolicy";
 
 // Public Pages
 import Home from "./pages/public/Home";
@@ -70,6 +75,7 @@ function App() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
+        {/* Public Routes */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -84,6 +90,13 @@ function App() {
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
 
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsConditions />} />
+          <Route path="/refunds" element={<RefundPolicy />} />
+
+          {/* Student */}
           <Route
             path="/mock-tests"
             element={
@@ -145,6 +158,7 @@ function App() {
             }
           />
 
+          {/* admin */}
           <Route
             path="/admin/mock-tests"
             element={

@@ -20,6 +20,13 @@ const uploadToCloudinary = (buffer, folder, resourceType = 'auto') => {
   });
 };
 
+// ── Helper: cast price-related fields coming from FormData (all strings) ──────
+const castPriceFields = (data) => {
+  if (data.price         !== undefined) data.price         = Number(data.price);
+  if (data.discountPrice !== undefined) data.discountPrice = Number(data.discountPrice);
+  return data;
+};
+
 // @desc    Get all courses
 // @route   GET /api/courses
 // @access  Public
@@ -104,7 +111,10 @@ exports.getCourse = async (req, res) => {
 // @access  Private/Admin
 exports.createCourse = async (req, res) => {
   try {
-    let courseData = { ...req.body };
+    // ✅ FIX: FormData sends everything as strings; cast price fields to Number
+    // before Mongoose validators run, otherwise "599" <= "2999" fails as a
+    // string comparison ("5" > "2") and triggers the discount price error.
+    let courseData = castPriceFields({ ...req.body });
 
     // Parse JSON fields if they're strings
     if (typeof courseData.roadmap === 'string') {
@@ -153,7 +163,8 @@ exports.updateCourse = async (req, res) => {
       });
     }
 
-    let updateData = { ...req.body };
+    // ✅ FIX: same casting needed on update path
+    let updateData = castPriceFields({ ...req.body });
 
     // Parse JSON fields if they're strings
     if (typeof updateData.roadmap === 'string') {

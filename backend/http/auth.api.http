@@ -22,7 +22,7 @@ POST {{authUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "jay@gmail.com",
+  "email": "raj@gmail.com",
   "password": "Balram@123"
 }
 

@@ -154,7 +154,7 @@
         return;
       }
 
-      if (formData.discountPrice > formData.price) {
+      if (Number(formData.discountPrice) > Number(formData.price)) {
         toast.error('Discount price cannot be greater than actual price');
         return;
       }

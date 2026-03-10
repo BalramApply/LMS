@@ -6,6 +6,7 @@ import { FiClock, FiTarget, FiList, FiLock, FiPlay } from "react-icons/fi";
 import {
   fetchPublishedTests,
   startTestAttempt,
+  fetchMyPurchases,
 } from "../../redux/slices/mockSlice";
 import { displayRazorpayMockTest } from "../../utils/mockTestPayment";
 import { formatCurrency } from "../../utils/formatters";
@@ -14,11 +15,14 @@ import styles from "./styles/MockTests.module.css";
 const MockTests = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { publishedTests, isLoading } = useSelector((s) => s.mock);
+  const { publishedTests, isLoading, purchasedTestIds } = useSelector(
+    (s) => s.mock,
+  );
   const { user } = useSelector((s) => s.auth);
 
   useEffect(() => {
     dispatch(fetchPublishedTests());
+    dispatch(fetchMyPurchases());
   }, [dispatch]);
 
   const handleStartTest = async (test) => {
@@ -38,6 +42,8 @@ const MockTests = () => {
       navigate(`/mock-tests/${testId}/take`);
     }
   };
+
+  const isPurchased = (testId) => purchasedTestIds.includes(testId);
 
   return (
     <div className={styles.container}>
@@ -117,7 +123,7 @@ const MockTests = () => {
                 onClick={() => handleStartTest(test)}
                 className={styles.startBtn}
               >
-                {test.accessType === "Paid" ? (
+                {test.accessType === "Paid" && !isPurchased(test._id) ? (
                   <>
                     <FiLock /> Buy & Start Test
                   </>

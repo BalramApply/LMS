@@ -2,8 +2,9 @@
 ### ENV VARIABLES
 ### ===============================
 @baseUrl = http://localhost:5000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OWJmYmM4YWY5MjFjMTQwODZjNTI3MCIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzcyMTk2NjQ3LCJleHAiOjE3NzI4MDE0NDd9.b0JORqxKuRFXxdGTlOkjVKq8urF8ICcvTz56FIbJrKM
-@courseId = 69a17b9ca23993c731b0e687
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YWU4ODljYzYyZGVlM2NlMjI1N2FmMiIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzczMDQ2MjA0LCJleHAiOjE3NzM2NTEwMDR9.QjyWJP7ADyt3wN0UIK98pZjJa60HCdCWlCwpbKgJJ0w
+
+@courseId = 69ae87c9c62dee3ce2257aa3
 
 ### ===============================
 ### 1️⃣ Enroll in FREE course

@@ -45,9 +45,9 @@ const Home = () => {
   ];
 
   const stats = [
-    { value: "10,000+", label: "Students" },
-    { value: "1+", label: "Courses" },
-    { value: "5,000+", label: "Certificates Issued" },
+    { value: "1000+", label: "Students" },
+    { value: "100+", label: "Courses" },
+    { value: "500+", label: "Certificates Issued" },
     { value: "95%", label: "Satisfaction Rate" },
   ];
 
